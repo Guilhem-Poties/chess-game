@@ -1,5 +1,7 @@
 #include <imgui.h>
 #include <iostream>
+#include <vector>
+#include "pieces.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
