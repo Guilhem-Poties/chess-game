@@ -1,5 +1,13 @@
-#include <pair>
+#include <cstddef>
+#include <utility>
 #include <vector>
+
+#pragma once
+
+#ifndef PIECES_ATTRIBUTES
+const std::vector<int> piece_value_by_type{9, 5, 3, 3, 1, 0};
+
+#endif
 
 enum class Piece_type : int {
     Queen,
@@ -15,20 +23,30 @@ enum class Color : bool {
     white
 };
 
-struct Piece {
+class Piece {
+private:
     Piece_type type;
     Color      color;
 
     int pos_x;
     int pos_y;
 
-    bool as_moved;
+    int value;
 
-    int point;
+    bool as_moved{false};
 
-    void move();
-    int  remove();
-    void take(Piece taken_piece);
+public:
+    Piece create(Piece_type piece_type, Color color, int pos_x, int pos_y);
 
+    // The piece move
+    void move(int pos_x, int pos_y);
+    // The piece is taken and removed from the board
+    void remove();
+    // Take another piece, return the value of the taken piece
+    int take(Piece taken_piece);
+
+    // Get the coordonates of the piece
+    void get_coordonate();
+    // Get the possible moves of the piece
     std::vector<std::pair<int, int>> get_moves();
 };

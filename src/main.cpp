@@ -1,7 +1,6 @@
 #include <imgui.h>
 #include <iostream>
 #include <vector>
-#include "pieces.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
@@ -19,6 +18,16 @@ int main()
 
             ImGui::SliderFloat("My Value", &value, 0.f, 3.f);
 
+            for (int i = 0; i < 7; i++)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    ImGui::SameLine();
+                    if (ImGui::Button("x", ImVec2{50.f, 50.f}))
+                        std::cout << "Clicked button 1\n";
+                }
+            }
+
             if (ImGui::Button("1", ImVec2{50.f, 50.f}))
                 std::cout << "Clicked button 1\n";
             ImGui::SameLine(); // Draw the next ImGui widget on the same line as the previous one. Otherwise it would be below it
@@ -31,7 +40,7 @@ int main()
                 std::cout << "Clicked button 2\n";
             ImGui::PopID(); // Then pop the id you pushed after you created the widget
 
-            ImGui::SameLine();
+            // ImGui::SameLine();
             ImGui::PushID(3);
             if (ImGui::Button("Yo", ImVec2{50.f, 50.f}))
                 std::cout << "Clicked button 3\n";
