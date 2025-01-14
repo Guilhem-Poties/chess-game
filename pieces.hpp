@@ -45,8 +45,6 @@ public:
     // Take another piece, return the value of the taken piece
     int take(Piece taken_piece);
 
-    // Get the coordonates of the piece
-    void get_coordonate();
     // Get the possible moves of the piece
     std::vector<std::pair<int, int>> get_moves();
 };
