@@ -1,14 +1,14 @@
 #include <imgui.h>
 #include <iostream>
 #include <vector>
-#include "board.hpp"
+#include "game.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
 {
     float value{0.f};
 
-    Board board{};
+    Game game{10.f, 5};
 
     quick_imgui::loop(
         "Chess",

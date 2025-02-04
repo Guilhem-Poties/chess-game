@@ -25,9 +25,13 @@ private:
 public:
     Board();
 
-    // Piece at(int pos_x, int pos_y);
+    int  coord_to_line(int x, int y);
+    void line_to_coord();
 
     std::optional<Piece> at(int x, int y);
+
+    std::optional<Piece> move(int current_x, int current_y, int new_x, int new_y);
+    std::optional<Piece> take(int x, int y);
 
     bool       is_in_board(int x, int y);
     TILE_STATE tile_state(int x, int y, Color color);
