@@ -10,34 +10,24 @@ Board::Board()
     // Generate the empty board
     std::vector<std::optional<Piece>> board{};
 
+    for (int _ = 0; _ < 64; _++)
+    {
+        board.push_back(std::nullopt);
+    }
+
     // Pieces placement
     for (int i = 0; i < 8; i++)
     {
-        board.push_back(Piece((Piece_type)pieces_alignement[i], Color::black, 1, i));
-        board.push_back(Piece(Piece_type::Pawn, Color::black, 1, i));
-        board.push_back(Piece(Piece_type::Pawn, Color::black, 6, i));
-        board.push_back(Piece((Piece_type)pieces_alignement[i], Color::black, 7, i));
+        // board.push_back(Piece((Piece_type)pieces_alignement[i], Color::black, 1, i));
+        // board.push_back(Piece(Piece_type::Pawn, Color::black, 1, i));
+        // board.push_back(Piece(Piece_type::Pawn, Color::black, 6, i));
+        // board.push_back(Piece((Piece_type)pieces_alignement[i], Color::black, 7, i));
     };
 
     this->_board = board;
-}
+};
 
-std::optional<Piece> Board::at(int pos_x, int pos_y)
+std::optional<Piece> Board::at(int x, int y)
 {
-    //     auto const same_coordonates = [&](Piece& piece) {
-    //     return piece.get_coordonates().first == pos_x && piece.get_coordonates().second == pos_y;
-    // };
-
-    // if (auto it = std::find(pieces.begin(), pieces.end(), same_coordonates) == pieces.end())
-    //     return pieces[it];
-    // else
-    // {
-    //     throw errno;
-    //     return pieces[0];
-    // }
-}
-
-int Board::n_piece()
-{
-    return this->pieces.size();
-}
+    return this->_board[x + (y * 8)];
+};
