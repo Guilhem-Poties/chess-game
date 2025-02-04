@@ -1,10 +1,11 @@
+#include "game.hpp"
 
-void start()
+void Game::start()
 {
 }
-void update()
+void Game::update()
 {
 }
-void end()
+void Game::end()
 {
 }
