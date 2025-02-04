@@ -29,8 +29,6 @@ public:
 
     std::optional<Piece> at(int x, int y);
 
-    int n_piece();
-
     bool       is_in_board(int x, int y);
     TILE_STATE tile_state(int x, int y, Color color);
 };
