@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
@@ -12,10 +13,14 @@ const std::vector<std::string> coordonates_letter{"A", "B", "C", "D", "E", "F", 
 
 class Board {
 private:
-    std::vector<std::vector<int>> cases;
+    std::vector<Piece> pieces{};
 
 public:
-    std::vector<std::vector<int>> generate_board();
+    Board();
 
-    std::string get_written_coordonates(std::pair<int, int> coordonates);
-}
+    Piece at(int pos_x, int pos_y);
+
+    int n_piece();
+};
+
+std::string get_case_written_coordonates(std::pair<int, int> coordonates);

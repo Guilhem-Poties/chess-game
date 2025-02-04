@@ -104,7 +104,7 @@ enum class Piece_type : int {
     King
 };
 
-enum class Color : bool {
+enum class Color : int {
     black,
     white
 };

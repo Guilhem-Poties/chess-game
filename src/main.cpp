@@ -1,11 +1,14 @@
 #include <imgui.h>
 #include <iostream>
-// #include <vector>
+#include <vector>
+#include "board.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
 {
     float value{0.f};
+
+    Board board{};
 
     quick_imgui::loop(
         "Chess",
@@ -20,28 +23,58 @@ int main()
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
-            for (int i = 0; i <= 7; i++)
+            for (size_t i = 0; i < 64; i++)
             {
-                for (int j = 0; j <= 7; j++)
+                if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
-                    if ((i + j) % 2 == 0)
-                    {
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
-                    }
-                    else
-                    {
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
-                    }
-
-                    ImGui::PushID(i * 10 + j);
-                    if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-                        std::cout << "Clicked button 1\n";
-                    ImGui::PopID();
-                    ImGui::PopStyleColor();
-                    ImGui::SameLine();
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
+                    // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
                 }
-                ImGui::NewLine();
+                else
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
+                    // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
+                }
+
+                ImGui::PushID(i);
+                if (ImGui::Button("x", ImVec2{50.f, 50.f}))
+                    std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8}) + " " + piece_written_name_by_type[(int)board.at(1, 1).type] + "\n";
+
+                ImGui::PopID();
+                ImGui::PopStyleColor();
+
+                if (i % 8 == 7)
+                    ImGui::NewLine();
+                else
+                    ImGui::SameLine();
             }
+
+            // for (int i = 7; i >= 0; i--)
+            // {
+            //     for (int j = 0; j <= 7; j++)
+            //     {
+            //         if ((i + j) % 2 == 0)
+            //         {
+            //             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
+            //             // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
+            //         }
+            //         else
+            //         {
+            //             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
+            //             // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
+            //         }
+
+            //         ImGui::PushID(i * 10 + j);
+            //         if (ImGui::Button("x", ImVec2{50.f, 50.f}))
+            //             std::cout << "Clicked button " + get_case_written_coordonates({i, j}) + "\n";
+
+            //         ImGui::PopID();
+            //         ImGui::PopStyleColor();
+
+            //         ImGui::SameLine();
+            //     }
+            //     ImGui::NewLine();
+            // }
 
             ImGui::PopStyleVar();
 
