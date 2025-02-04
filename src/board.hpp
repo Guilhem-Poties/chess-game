@@ -28,6 +28,7 @@ public:
     bool is_in_board(int x, int y);
     bool is_empty(int x, int y);
     bool is_ennemy(int x, int y);
+    bool
 };
 
 std::string get_case_written_coordonates(std::pair<int, int> coordonates);

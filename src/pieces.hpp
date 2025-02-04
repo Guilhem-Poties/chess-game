@@ -41,57 +41,197 @@ const std::vector<std::string> piece_written_name_by_type{"Queen", "Tower", "Bis
 //     return std::make_pair(main_direction(main_direction(a)), second_direction(b));
 // };
 
-const std::vector<std::vector<std::pair<int, int> (*)(int, int)>> piece_move_set_by_type{
-    {
-        [](int x, int y) { return std::make_pair(x++, y); },
-        [](int x, int y) { return std::make_pair(x--, y); },
-        [](int x, int y) { return std::make_pair(x, y++); },
-        [](int x, int y) { return std::make_pair(x, y--); },
-        [](int x, int y) { return std::make_pair(x++, y++); },
-        [](int x, int y) { return std::make_pair(x--, y++); },
-        [](int x, int y) { return std::make_pair(x--, y--); },
-        [](int x, int y) { return std::make_pair(x++, y--); },
-    },
-    {
-        [](int x, int y) { return std::make_pair(x++, y); },
-        [](int x, int y) { return std::make_pair(x--, y); },
-        [](int x, int y) { return std::make_pair(x, y++); },
-        [](int x, int y) { return std::make_pair(x, y--); },
-    },
-    {
-        [](int x, int y) { return std::make_pair(x++, y++); },
-        [](int x, int y) { return std::make_pair(x--, y++); },
-        [](int x, int y) { return std::make_pair(x--, y--); },
-        [](int x, int y) { return std::make_pair(x++, y--); },
-    },
-    {
-        [](int x, int y) { return std::make_pair(x += 2, y++); },
-        [](int x, int y) { return std::make_pair(x++, y += 2); },
-        [](int x, int y) { return std::make_pair(x += 2, y--); },
-        [](int x, int y) { return std::make_pair(x--, y += 2); },
-        [](int x, int y) { return std::make_pair(x -= 2, y++); },
-        [](int x, int y) { return std::make_pair(x++, y -= 2); },
-        [](int x, int y) { return std::make_pair(x -= 2, y--); },
-        [](int x, int y) { return std::make_pair(x--, y -= 2); },
-    },
-    {
-        [](int x, int y) { return std::make_pair(x++, y); },
-        [](int x, int y) { return std::make_pair(x++, y++); },
-        [](int x, int y) { return std::make_pair(x++, y--); },
-    },
-    {
-        [](int x, int y) { return std::make_pair(x++, y); },
-        [](int x, int y) { return std::make_pair(x--, y); },
-        [](int x, int y) { return std::make_pair(x, y++); },
-        [](int x, int y) { return std::make_pair(x, y--); },
-        [](int x, int y) { return std::make_pair(x++, y++); },
-        [](int x, int y) { return std::make_pair(x--, y++); },
-        [](int x, int y) { return std::make_pair(x--, y--); },
-        [](int x, int y) { return std::make_pair(x++, y--); },
-    },
+// const std::vector<std::vector<std::pair<int, int> (*)(int, int)>> piece_move_set_by_type{
+//     {
+//         [](int x, int y) { return std::make_pair(x++, y); },
+//         [](int x, int y) { return std::make_pair(x--, y); },
+//         [](int x, int y) { return std::make_pair(x, y++); },
+//         [](int x, int y) { return std::make_pair(x, y--); },
+//         [](int x, int y) { return std::make_pair(x++, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y--); },
+//         [](int x, int y) { return std::make_pair(x++, y--); },
+//     },
+//     {
+//         [](int x, int y) { return std::make_pair(x++, y); },
+//         [](int x, int y) { return std::make_pair(x--, y); },
+//         [](int x, int y) { return std::make_pair(x, y++); },
+//         [](int x, int y) { return std::make_pair(x, y--); },
+//     },
+//     {
+//         [](int x, int y) { return std::make_pair(x++, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y--); },
+//         [](int x, int y) { return std::make_pair(x++, y--); },
+//     },
+//     {
+//         [](int x, int y) { return std::make_pair(x += 2, y++); },
+//         [](int x, int y) { return std::make_pair(x++, y += 2); },
+//         [](int x, int y) { return std::make_pair(x += 2, y--); },
+//         [](int x, int y) { return std::make_pair(x--, y += 2); },
+//         [](int x, int y) { return std::make_pair(x -= 2, y++); },
+//         [](int x, int y) { return std::make_pair(x++, y -= 2); },
+//         [](int x, int y) { return std::make_pair(x -= 2, y--); },
+//         [](int x, int y) { return std::make_pair(x--, y -= 2); },
+//     },
+//     {
+//         [](int x, int y) { return std::make_pair(x++, y); },
+//         [](int x, int y) { return std::make_pair(x++, y++); },
+//         [](int x, int y) { return std::make_pair(x++, y--); },
+//     },
+//     {
+//         [](int x, int y) { return std::make_pair(x++, y); },
+//         [](int x, int y) { return std::make_pair(x--, y); },
+//         [](int x, int y) { return std::make_pair(x, y++); },
+//         [](int x, int y) { return std::make_pair(x, y--); },
+//         [](int x, int y) { return std::make_pair(x++, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y++); },
+//         [](int x, int y) { return std::make_pair(x--, y--); },
+//         [](int x, int y) { return std::make_pair(x++, y--); },
+//     },
+// };
+class piece {
+public:
+    virtual std::vector<std::pair<int, int>> get_all_possible_moves() = 0;
+
+private:
 };
 
-const std::vector<int> pieces_alignement{1, 3, 2, 0, 5, 2, 3, 1};
+// enum class Direction{
+//     Left,Right,
+
+// }
+
+class King : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board) override
+    {
+        // if(board.is_empty(int x, int y))
+        return {
+            {1, 1},
+            {0, 1},
+            {-1, 1},
+            {-1, 0},
+            {-1, -1},
+            {0, -1},
+            {1, -1}
+        };
+    }
+};
+
+class Queen : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board, int x, int y) override
+    {
+        {
+            [](int x, int y) { return std::make_pair(x++, y); },
+            [](int x, int y) { return std::make_pair(x--, y); },
+            [](int x, int y) { return std::make_pair(x, y++); },
+            [](int x, int y) { return std::make_pair(x, y--); },
+            [](int x, int y) { return std::make_pair(x++, y++); },
+            [](int x, int y) { return std::make_pair(x--, y++); },
+            [](int x, int y) { return std::make_pair(x--, y--); },
+            [](int x, int y) { return std::make_pair(x++, y--); },
+        }
+
+        std::vector<std::pair<int, int>>
+            deplacement = {
+                {1, 1},
+                {0, 1},
+                {-1, 1},
+                {-1, 0},
+                {-1, -1},
+                {0, -1},
+                {1, -1},
+                {1, 0}
+            };
+        std::vector<std::pair<int, int>> deplacement_possible{};
+
+        for (std::pair<int, int> p : deplacement)
+        {
+            int X = x + p.first;
+            int Y = y + p.second;
+            while (board.is_in_board(X, Y))
+            {
+                if (board.is_empty(X, Y))
+                {
+                    if (!board.is_ennemy)
+                    {
+                        deplacement_possible.emplace_back(X, Y);
+                        X += p.first;
+                        Y += p.second;
+                    }
+                }
+            }
+        }
+        // if(board.is_empty(int x, int y))
+        return {
+            {1, 1},
+            {0, 1},
+            {-1, 1},
+            {-1, 0},
+            {-1, -1},
+            {0, -1},
+            {1, -1},
+            {1, 0}
+        };
+    }
+};
+
+class Bishop : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board) override
+    {
+        // if(board.is_empty(int x, int y))
+        return {
+            {1, 1},
+            {-1, 1},
+            {-1, -1},
+            {1, -1}
+        };
+    }
+};
+
+class Knight : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board) override
+    {
+        // if(board.is_empty(int x, int y))
+        return {
+            {2, 1},
+            {2, -1},
+            {1, 2},
+            {-1, 2},
+            {-2, 1},
+            {-2, -1},
+            {1, -2},
+            {-1, -2},
+        };
+    }
+};
+
+class Tower : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board) override
+    {
+        // if(board.is_empty(int x, int y))
+        return {
+            {0, 1},
+            {-1, 0},
+            {0, -1},
+            {1, 0}
+        };
+    }
+};
+
+class Pawn : public piece {
+    std::vector<std::pair<int, int>> get_all_possible_moves(Board const& board) override
+    {
+        // if(board.is_empty(int x, int y))
+        return {
+            {0, 1},
+            {0, 2}
+        };
+    }
+};
+
+const std::vector<int>
+    pieces_alignement{1, 3, 2, 0, 5, 2, 3, 1};
 
 #endif
 
