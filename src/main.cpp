@@ -23,31 +23,31 @@ int main()
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
-            // for (size_t i = 0; i < 64; i++)
-            // {
-            //     if (((i / 8) + (i % 8) + 1) % 2 == 0)
-            //     {
-            //         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
-            //         // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
-            //     }
-            //     else
-            //     {
-            //         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
-            //         // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
-            //     }
+            for (size_t i = 0; i < 64; i++)
+            {
+                if (((i / 8) + (i % 8) + 1) % 2 == 0)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
+                    // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
+                }
+                else
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
+                    // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
+                }
 
-            //     ImGui::PushID(i);
-            //     if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-            //         std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8}) + " " + piece_written_name_by_type[(int)board.at(1, 1).type] + "\n";
+                ImGui::PushID(i);
+                if (ImGui::Button("x", ImVec2{50.f, 50.f}))
+                    std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8});
 
-            //     ImGui::PopID();
-            //     ImGui::PopStyleColor();
+                ImGui::PopID();
+                ImGui::PopStyleColor();
 
-            //     if (i % 8 == 7)
-            //         ImGui::NewLine();
-            //     else
-            //         ImGui::SameLine();
-            // }
+                if (i % 8 == 7)
+                    ImGui::NewLine();
+                else
+                    ImGui::SameLine();
+            }
 
             // for (int i = 7; i >= 0; i--)
             // {

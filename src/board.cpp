@@ -25,7 +25,7 @@ Board::Board()
     };
 
     this->_board = board;
-};
+}
 
 int Board::coord_to_line(int x, int y)
 {
@@ -39,23 +39,30 @@ std::optional<Piece> Board::at(int x, int y)
         return this->_board[coord_to_line(x, y)];
     else
         return std::nullopt;
-};
+}
 
 std::optional<Piece> Board::move(int current_x, int current_y, int new_x, int new_y)
 {
+    std::optional<Piece> taken_piece{std::nullopt};
+
     if (this->at(new_x, new_y) != std::nullopt)
-        take(new_x, new_y);
+        taken_piece = take(new_x, new_y);
 
     this->_board[coord_to_line(new_x, new_y)]         = this->at(current_x, current_y);
     this->_board[coord_to_line(current_x, current_y)] = std::nullopt;
+
+    return taken_piece;
 }
-std::optional<Piece> Board::take(int x, int y) {}
+std::optional<Piece> Board::take(int x, int y)
+{
+    return this->at(x, y);
+}
 
 bool Board::is_in_board(int x, int y)
 {
     return (x >= 8 || x < 0 || y >= 8 || y < 0);
 }
-TILE_STATE Board::tile_state(int x, int y, Color color)
+Tile_State Board::tile_state(int x, int y, Color color)
 {
-    return (this->at(x, y) != std::nullopt ? (this->at(x, y).value().color == color) ? TILE_STATE::ally : TILE_STATE::enemy : TILE_STATE::empty);
+    return (this->at(x, y) != std::nullopt ? (this->at(x, y).value().color == color) ? Tile_State::ally : Tile_State::enemy : Tile_State::empty);
 }

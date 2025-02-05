@@ -12,7 +12,7 @@
 const std::vector<std::string> coordonates_letter{"A", "B", "C", "D", "E", "F", "G", "H"};
 #endif
 
-enum class TILE_STATE : int {
+enum class Tile_State : int {
     enemy,
     ally,
     empty
@@ -34,7 +34,7 @@ public:
     std::optional<Piece> take(int x, int y);
 
     bool       is_in_board(int x, int y);
-    TILE_STATE tile_state(int x, int y, Color color);
+    Tile_State tile_state(int x, int y, Color color);
 };
 
 std::string get_case_written_coordonates(std::pair<int, int> coordonates);

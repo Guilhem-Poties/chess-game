@@ -34,3 +34,8 @@ std::pair<int, int> Piece::get_coordonates()
 {
     return std::make_pair(this->pos_x, this->pos_y);
 }
+
+std::vector<std::pair<int, int>> Piece::get_moves()
+{
+    return {};
+}
