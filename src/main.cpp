@@ -1,14 +1,14 @@
 #include <imgui.h>
 #include <iostream>
 #include <vector>
-#include "board.hpp"
+#include "game.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 int main()
 {
     float value{0.f};
 
-    Board board{};
+    Game game{10.f, 5};
 
     quick_imgui::loop(
         "Chess",
@@ -38,7 +38,7 @@ int main()
 
                 ImGui::PushID(i);
                 if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-                    std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8}) + " " + piece_written_name_by_type[(int)board.at(1, 1).type] + "\n";
+                    std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8});
 
                 ImGui::PopID();
                 ImGui::PopStyleColor();
