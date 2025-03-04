@@ -57,11 +57,11 @@ std::optional<Piece> Board::take(int x, int y)
     return this->at(x, y);
 }
 
-bool Board::is_in_board(int x, int y)
+bool Board::is_in_board(int x, int y) const
 {
     return (x >= 0 || x < 8 || y >= 0 || y < 8);
 }
-Tile_State Board::tile_state(int x, int y, Color color)
+Tile_State Board::tile_state(int x, int y, Color color) const
 {
     return (this->at(x, y) != std::nullopt ? (this->at(x, y).value().color == color) ? Tile_State::ally : Tile_State::enemy : Tile_State::empty);
 }

@@ -32,8 +32,8 @@ public:
     std::optional<Piece> move(int current_x, int current_y, int new_x, int new_y);
     std::optional<Piece> take(int x, int y);
 
-    bool       is_in_board(int x, int y);
-    Tile_State tile_state(int x, int y, Color color);
+    bool       is_in_board(int x, int y) const;
+    Tile_State tile_state(int x, int y, Color color) const;
 };
 
 std::string get_case_written_coordonates(std::pair<int, int> coordonates);
