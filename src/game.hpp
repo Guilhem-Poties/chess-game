@@ -4,8 +4,6 @@
 
 class Game {
 private:
-    Board board{};
-
     Color current_player{Color::white};
     int   n_turn{0};
 
@@ -18,6 +16,7 @@ private:
     std::pair<std::vector<Piece>, std::vector<Piece>> captured_pieces{{}, {}};
 
 public:
+    Board board{};
     Game(float _time, int _increment)
         : time(std::make_pair((float)_time, (float)_time)), increment(_increment){};
 

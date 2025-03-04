@@ -10,6 +10,8 @@ int main()
 
     Game game{10.f, 5};
 
+    game.board.generate_board();
+
     quick_imgui::loop(
         "Chess",
         /* init: */ [&]() {},
@@ -38,7 +40,13 @@ int main()
 
                 ImGui::PushID(i);
                 if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-                    std::cout << "Clicked button " + get_case_written_coordonates({i / 8, i % 8});
+                {
+                    std::cout << "Clicked button " + get_case_written_coordonates(line_to_coord(i)) + "\n";
+                    if (game.board.at(line_to_coord(i).first, line_to_coord(i).second) == std::nullopt)
+                        std::cout << "Vide \n";
+                    else
+                        std::cout << "Piece \n";
+                }
 
                 ImGui::PopID();
                 ImGui::PopStyleColor();

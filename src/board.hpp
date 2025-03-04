@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <optional>
 #include <string>
 #include <utility>
@@ -20,13 +21,11 @@ enum class Tile_State : int {
 
 class Board {
 private:
+public:
     std::vector<std::optional<Piece>> _board{};
 
-public:
-    Board();
-
-    int  coord_to_line(int x, int y);
-    void line_to_coord();
+    Board(){};
+    void generate_board();
 
     std::optional<Piece> at(int x, int y);
 
@@ -38,3 +37,6 @@ public:
 };
 
 std::string get_case_written_coordonates(std::pair<int, int> coordonates);
+
+int                 coord_to_line(int x, int y);
+std::pair<int, int> line_to_coord(int l);
