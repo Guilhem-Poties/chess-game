@@ -31,20 +31,29 @@
 //     return taken_value;
 // };
 
-// std::pair<int, int> Piece::get_coordonates()
+// Pos Piece::get_coordonates()
 // {
-//     return std::make_pair(this->pos_x, this->pos_y);
+//     return std::make_pos_add(this->pos_x, this->pos_y);
 // }
 
-// std::vector<std::pair<int, int>> Piece::get_moves()
+// std::vector<Pos> Piece::get_moves()
 // {
 //     return {};
 // }
 
-// King
-std::vector<std::pair<int, int>> King::get_all_possible_moves(Board const& board, int x, int y)
+char Piece::to_char()
 {
-    std::vector<std::pair<int, int>> all_moves{
+    return ' ';
+}
+std::string Piece::to_string()
+{
+    return " ";
+}
+
+// King
+std::vector<Pos> King::get_all_possible_moves(Board const& board, Pos pos)
+{
+    std::vector<Pos> all_moves{
         {1, 1},
         {0, 1},
         {-1, 1},
@@ -54,23 +63,35 @@ std::vector<std::pair<int, int>> King::get_all_possible_moves(Board const& board
         {1, -1}
     };
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    std::vector<Pos> current_possible_moves{};
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+        Pos move = {pos.x + pos_add.x, pos.y + pos_add.y};
+
+        if (board.is_in_board(move))
         {
-            current_possible_moves.emplace_back(X, Y);
+            if (board.tile_state(move, get_color()) != Tile_State::ally)
+            {
+                current_possible_moves.emplace_back(move);
+            }
         }
     }
+    return current_possible_moves;
+}
+char King::to_char()
+{
+    return 'k';
+}
+std::string King::to_string()
+{
+    return "King";
 }
 
 // Queen
-std::vector<std::pair<int, int>> Queen::get_all_possible_moves(Board const& board, int x, int y)
+std::vector<Pos> Queen::get_all_possible_moves(Board const& board, Pos pos)
 {
-    std::vector<std::pair<int, int>> all_moves{
+    std::vector<Pos> all_moves{
         {1, 1},
         {0, 1},
         {-1, 1},
@@ -81,51 +102,73 @@ std::vector<std::pair<int, int>> Queen::get_all_possible_moves(Board const& boar
         {1, 0}
     };
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    std::vector<Pos> current_possible_moves{};
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        while (board.is_in_board(X, Y))
+        Pos move = {pos.x + pos_add.x, pos.y + pos_add.y};
+        while (board.is_in_board(move))
         {
-            if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+            if (board.is_in_board(move))
             {
-                current_possible_moves.emplace_back(X, Y);
-                X += pair.first;
-                Y += pair.second;
+                if (board.tile_state(move, get_color()) != Tile_State::ally)
+                {
+                    current_possible_moves.emplace_back(move);
+                    move = move + pos_add;
+                }
             }
         }
     }
+    return current_possible_moves;
+}
+char Queen::to_char()
+{
+    return 'q';
+}
+std::string Queen::to_string()
+{
+    return "Queen";
 }
 
 // Bishop
-std::vector<std::pair<int, int>> Bishop::get_all_possible_moves(Board const& board, int x, int y)
+std::vector<Pos> Bishop::get_all_possible_moves(Board const& board, Pos pos)
 {
-    std::vector<std::pair<int, int>> all_moves{
+    std::vector<Pos> all_moves{
         {1, 1},
         {-1, 1},
         {-1, -1},
         {1, -1}
     };
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    std::vector<Pos> current_possible_moves{};
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+        Pos move = {pos.x + pos_add.x, pos.y + pos_add.y};
+
+        if (board.is_in_board(move))
         {
-            current_possible_moves.emplace_back(X, Y);
+            if (board.tile_state(move, get_color()) != Tile_State::ally)
+            {
+                current_possible_moves.emplace_back(move);
+            }
         }
     }
+    return current_possible_moves;
+}
+char Bishop::to_char()
+{
+    return 'b';
+}
+std::string Bishop::to_string()
+{
+    return "Bishop";
 }
 
 // Knight
-std::vector<std::pair<int, int>> Knight::get_all_possible_moves(Board const& board, int x, int y)
+std::vector<Pos> Knight::get_all_possible_moves(Board const& board, Pos pos)
 {
-    std::vector<std::pair<int, int>> all_moves{
+    std::vector<Pos> all_moves{
         {2, 1},
         {2, -1},
         {1, 2},
@@ -136,59 +179,137 @@ std::vector<std::pair<int, int>> Knight::get_all_possible_moves(Board const& boa
         {-1, -2},
     };
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    std::vector<Pos> current_possible_moves{};
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+        Pos move = {pos.x + pos_add.x, pos.y + pos_add.y};
+
+        if (board.is_in_board(move))
         {
-            current_possible_moves.emplace_back(X, Y);
+            if (board.tile_state(move, get_color()) != Tile_State::ally)
+            {
+                current_possible_moves.emplace_back(move);
+            }
         }
     }
+    return current_possible_moves;
+}
+char Knight::to_char()
+{
+    return 'c';
+}
+std::string Knight::to_string()
+{
+    return "Knight";
 }
 
 // Tower
-std::vector<std::pair<int, int>> Tower::get_all_possible_moves(Board const& board, int x, int y)
+std::vector<Pos> Tower::get_all_possible_moves(Board const& board, Pos pos)
 {
-    std::vector<std::pair<int, int>> all_moves{
+    std::vector<Pos> all_moves{
         {0, 1},
         {-1, 0},
         {0, -1},
         {1, 0}
     };
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    std::vector<Pos> current_possible_moves{};
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+        Pos move = {pos.x + pos_add.x, pos.y + pos_add.y};
+
+        if (board.is_in_board(move))
         {
-            current_possible_moves.emplace_back(X, Y);
+            if (board.tile_state(move, get_color()) != Tile_State::ally)
+            {
+                current_possible_moves.emplace_back(move);
+            }
         }
     }
+    return current_possible_moves;
+}
+char Tower::to_char()
+{
+    return 't';
+}
+std::string Tower::to_string()
+{
+    return "Tower";
 }
 
 // Pawn
-std::vector<std::pair<int, int>> Pawn::get_all_possible_moves(Board const& board, int x, int y)
+std::vector<Pos> Pawn::get_all_possible_moves(Board const& board, Pos pos)
 {
-    std::vector<std::pair<int, int>> all_moves{
-        {0, 1},
-        {0, 2}
-    };
+    std::vector<Pos> all_moves{{0, 1}};
+    std::vector<Pos> current_possible_moves{};
 
-    std::vector<std::pair<int, int>> current_possible_moves{};
+    if (!this->has_moved())
+        all_moves.push_back({0, 2});
 
-    for (std::pair<int, int> pair : all_moves)
+    for (Pos pos_add : all_moves)
     {
-        int X = x + pair.first;
-        int Y = y + pair.second;
-        if (board.is_in_board(X, Y) && board.tile_state(X, Y, get_color()) != Tile_State::ally)
+        Pos move = this->get_color() == Color::white ? pos + pos_add : pos - pos_add;
+
+        if (board.is_in_board(move) && board.tile_state(move, get_color()) != Tile_State::ally)
         {
-            current_possible_moves.emplace_back(X, Y);
+            current_possible_moves.emplace_back(move);
         }
     }
+    return current_possible_moves;
+}
+char Pawn::to_char()
+{
+    return 'p';
+}
+std::string Pawn::to_string()
+{
+    return "Pawn";
+}
+
+std::unique_ptr<Piece> place_piece(int pos)
+{
+    if (int y = line_to_coord(pos).y; y == 0)
+    {
+        switch (pieces_alignement[line_to_coord(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::black);
+        case 1:
+            return std::make_unique<Knight>(Color::black);
+        case 2:
+            return std::make_unique<Bishop>(Color::black);
+        case 0:
+            return std::make_unique<King>(Color::black);
+        case 4:
+            return std::make_unique<Queen>(Color::black);
+        default:
+            return nullptr;
+        }
+    }
+    else if (y == 7)
+    {
+        switch (pieces_alignement[line_to_coord(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::black);
+        case 1:
+            return std::make_unique<Knight>(Color::black);
+        case 2:
+            return std::make_unique<Bishop>(Color::black);
+        case 0:
+            return std::make_unique<King>(Color::black);
+        case 4:
+            return std::make_unique<Queen>(Color::black);
+        default:
+            return nullptr;
+        }
+    }
+    else if (y == 1)
+        return std::make_unique<Pawn>(Color::white);
+    else if (y == 6)
+        return std::make_unique<Pawn>(Color::black);
+    else
+        return nullptr;
 }

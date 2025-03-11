@@ -1,67 +1,67 @@
 #include "board.hpp"
 
-std::string get_case_written_coordonates(std::pair<int, int> coordonates)
+std::string get_case_written_coordonates(Pos coordonates)
 {
-    return coordonates_letter[coordonates.second] + std::to_string(coordonates.first + 1);
+    return coordonates_letter[coordonates.y] + std::to_string(coordonates.x + 1);
 }
 
 void Board::generate_board()
 {
-    for (int _ = 0; _ < 64; _++)
+    // this->_board = { {std::make_unique<Tower>(Color::black), std::make_unique<Knight>(Color::white), std::make_unique<Bishop>(Color::white), std::make_unique<King>(Color::white), std::make_unique<Queen>(Color::white), std::make_unique<Bishop>(Color::white), std::make_unique<Knight>(Color::white), std::make_unique<Tower>(Color::white)},
+    //                  {std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white)},
+    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
+    // }
+    for (size_t pos = 0; pos < 64; pos++)
     {
-        this->_board.push_back(Piece(Piece_type::Pawn, Color::black, 1, 1));
+        this->_board.emplace_back(place_piece(pos));
     }
-
-    // // Pieces placement
-    // for (int i = 0; i < 8; i++)
-    // {
-    //     std::cout << "ouiiiii";
-    //     board[8 + i]  = (Piece(Piece_type::Pawn, Color::black, 1, i));
-    //     board[48 + i] = (Piece(Piece_type::Pawn, Color::black, 6, i));
-    //     board[56 + i] = (Piece((Piece_type)pieces_alignement[i], Color::black, 7, i));
-    // };
 }
 
-int coord_to_line(int x, int y)
+int coord_to_line(Pos pos)
 {
-    return x + (y * 8);
+    return pos.x + (pos.y * 8);
 }
-std::pair<int, int> line_to_coord(int l)
+Pos line_to_coord(int l)
 {
-    return std::make_pair(l / 8, l % 8);
+    return {l % 8, l / 8};
 }
 
-// Return the piece located at the suggested coordonates and a nullopt if empty
-std::optional<Piece> Board::at(int x, int y)
+// Return the piece located at the suggested coordonates and a nullptr if empty
+Piece* Board::at(Pos pos) const
 {
-    if (is_in_board(x, y))
-        return this->_board[coord_to_line(x, y)];
+    if (is_in_board(pos))
+        return this->_board.at(coord_to_line(pos)).get();
     else
-        return std::nullopt;
+        return nullptr;
 }
 
-std::optional<Piece> Board::move(int current_x, int current_y, int new_x, int new_y)
+Piece* Board::move(Pos current_pos, Pos new_pos)
 {
-    std::optional<Piece> taken_piece{std::nullopt};
+    Piece* taken_piece{nullptr};
 
-    if (this->at(new_x, new_y) != std::nullopt)
-        taken_piece = take(new_x, new_y);
+    if (this->at(new_pos) != nullptr)
+        taken_piece = take(new_pos);
 
-    this->_board[coord_to_line(new_x, new_y)]         = this->at(current_x, current_y);
-    this->_board[coord_to_line(current_x, current_y)] = std::nullopt;
+    this->_board[coord_to_line(new_pos)]     = std::move(this->_board.at(coord_to_line(current_pos)));
+    this->_board[coord_to_line(current_pos)] = nullptr;
 
     return taken_piece;
 }
-std::optional<Piece> Board::take(int x, int y)
+Piece* Board::take(Pos pos)
 {
-    return this->at(x, y);
+    Piece* captured_piece               = this->at(pos);
+    this->_board.at(coord_to_line(pos)) = nullptr;
+    return captured_piece;
 }
 
-bool Board::is_in_board(int x, int y) const
+bool Board::is_in_board(Pos pos) const
 {
-    return (x >= 0 || x < 8 || y >= 0 || y < 8);
+    return ((pos.x >= 0 || pos.x < 8) && (pos.y >= 0 || pos.y < 8));
 }
-Tile_State Board::tile_state(int x, int y, Color color) const
+Tile_State Board::tile_state(Pos pos, Color color) const
 {
-    return (this->at(x, y) != std::nullopt ? (this->at(x, y).value().color == color) ? Tile_State::ally : Tile_State::enemy : Tile_State::empty);
+    return (this->at(pos) != nullptr ? (this->at(pos)->get_color() == color) ? Tile_State::ally : Tile_State::enemy : Tile_State::empty);
 }

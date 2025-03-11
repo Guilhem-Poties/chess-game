@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <iostream>
-#include <optional>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
@@ -19,24 +19,42 @@ enum class Tile_State : int {
     empty
 };
 
+struct Pos {
+    int x;
+    int y;
+};
+
+inline Pos operator+(Pos const& pos_a, Pos const& pos_b)
+{
+    return {pos_a.x + pos_b.x, pos_a.y + pos_b.y};
+}
+inline Pos operator-(Pos const& pos_a, Pos const& pos_b)
+{
+    return {pos_a.x - pos_b.x, pos_a.y - pos_b.y};
+}
+inline bool operator==(Pos const& pos_a, Pos const& pos_b)
+{
+    return ((pos_a.x == pos_b.x) && (pos_a.y == pos_b.y));
+}
+
 class Board {
 private:
-public:
-    std::vector<std::optional<Piece>> _board{};
+    std::vector<std::unique_ptr<Piece>> _board{};
 
+public:
     Board(){};
     void generate_board();
 
-    std::optional<Piece> at(int x, int y);
+    Piece* at(Pos) const;
 
-    std::optional<Piece> move(int current_x, int current_y, int new_x, int new_y);
-    std::optional<Piece> take(int x, int y);
+    Piece* move(Pos current_pos, Pos new_pos);
+    Piece* take(Pos);
 
-    bool       is_in_board(int x, int y) const;
-    Tile_State tile_state(int x, int y, Color color) const;
+    bool       is_in_board(Pos pos) const;
+    Tile_State tile_state(Pos, Color color) const;
 };
 
-std::string get_case_written_coordonates(std::pair<int, int> coordonates);
+std::string get_case_written_coordonates(Pos coordonates);
 
-int                 coord_to_line(int x, int y);
-std::pair<int, int> line_to_coord(int l);
+int coord_to_line(Pos pos);
+Pos line_to_coord(int l);

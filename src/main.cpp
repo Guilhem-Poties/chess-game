@@ -29,23 +29,32 @@ int main()
             {
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
+                    if (game.is_in_move_set(line_to_coord(i)))
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.8f, 0.8f, 1.f});
+                    else
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
                     // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
                 }
                 else
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
+                    if (game.is_in_move_set(line_to_coord(i)))
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.2f, 0.2f, 0.2f, 1.f});
+                    else
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
                     // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
                 }
 
                 ImGui::PushID(i);
-                if (ImGui::Button("x", ImVec2{50.f, 50.f}))
+
+                if (ImGui::Button(game.board.at(line_to_coord(i)) == nullptr ? "" : "x", ImVec2{50.f, 50.f}))
                 {
                     std::cout << "Clicked button " + get_case_written_coordonates(line_to_coord(i)) + "\n";
-                    if (game.board.at(line_to_coord(i).first, line_to_coord(i).second) == std::nullopt)
+                    if (game.board.at(line_to_coord(i)) == nullptr)
                         std::cout << "Vide \n";
                     else
-                        std::cout << "Piece \n";
+                        std::cout << game.board.at(line_to_coord(i))->to_string() + "\n";
+
+                    game.update(line_to_coord(i));
                 }
 
                 ImGui::PopID();

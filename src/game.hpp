@@ -10,10 +10,11 @@ private:
     std::pair<float, float> time;
     int                     increment;
 
-    bool                                              selected_piece{false};
-    std::pair<int, int>                               selected_piece_pos{};
-    std::vector<std::pair<int, int>>                  possible_moves{};
-    std::pair<std::vector<Piece>, std::vector<Piece>> captured_pieces{{}, {}};
+    bool                                                selected_piece{false};
+    Pos                                                 selected_piece_pos{};
+    std::vector<Pos>                                    possible_moves{};
+    std::pair<std::vector<Piece*>, std::vector<Piece*>> captured_pieces{{}, {}};
+    std::vector<std::pair<Piece*, Pos>>                 move_history{};
 
 public:
     Board board{};
@@ -21,10 +22,12 @@ public:
         : time(std::make_pair((float)_time, (float)_time)), increment(_increment){};
 
     void start();
-    void update(int x, int y);
+    void update(Pos pos);
     void end();
 
     void switch_player();
-    void capture_piece(Piece piece);
-    void select_piece(int x, int y);
+    void capture_piece(Piece* piece);
+    void select_piece(Pos pos);
+
+    bool is_in_move_set(Pos pos);
 };
