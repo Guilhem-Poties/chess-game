@@ -10,9 +10,16 @@ void Game::update(Pos pos)
     // If the selected case is in the pieces possible moves, we move it and switch players
     else if (this->selected_piece && is_in_move_set(pos))
     {
-        if (Piece* piece = this->board.move(this->selected_piece_pos, pos); piece != nullptr)
-            capture_piece(piece);
+        if (this->board.at(this->selected_piece_pos))
+        {
+            bool en_passant = can_en_passant(this->board, this->board.at(this->selected_piece_pos)->get_color() == Color::white ? pos.incr_y(-1) : pos.incr_y(1)); // Check if the player hace done en passant
+            capture_piece(this->board.take(this->selected_piece_pos, pos, en_passant));
+        }
 
+        else
+            this->board.move(this->selected_piece_pos, pos);
+
+        this->board.at(pos)->moved_piece();
         this->selected_piece     = false;
         this->selected_piece_pos = {};
         this->possible_moves     = {};

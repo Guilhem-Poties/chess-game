@@ -12,92 +12,6 @@ struct Pos;
 
 const std::vector<int> pieces_alignement{3, 1, 2, 0, 4, 2, 1, 3};
 #endif
-// const std::vector<int>         piece_value_by_type{9, 5, 3, 3, 1, 0};
-// const std::vector<int>         piece_n_move_directions_by_type{8, 4, 4, 8, 3, 8};
-// const std::vector<bool>        piece_inf_range_by_type{true, true, true, false, false, false};
-// const std::vector<std::string> piece_written_name_by_type{"Queen", "Tower", "Bishop", "Knight", "Pawn", "King"};
-
-// Direction operators used to create the mouvement operators
-// int front(int x)
-// {
-//     return x++;
-// };
-// int back(int x)
-// {
-//     return x--;
-// };
-// int left(int y)
-// {
-//     return y++;
-// };
-// int right(int y)
-// {
-//     return y--;
-// };
-// int still(int a)
-// {
-//     return a--;
-// }
-
-// // Direction operators used to calculate the different move possibilities of the piece
-// std::pair<int, int> straight_move(int x, int y, int (*v_direction)(int), int (*h_direction)(int))
-// {
-//     return std::make_pair(v_direction(x), h_direction(y));
-// };
-// std::pair<int, int> L_move(int a, int b, int (*main_direction)(int), int (*second_direction)(int))
-// {
-//     return std::make_pair(main_direction(main_direction(a)), second_direction(b));
-// };
-
-// const std::vector<std::vector<std::pair<int, int> (*)(int, int)>> piece_move_set_by_type{
-//     {
-//         [](int x, int y) { return std::make_pair(x++, y); },
-//         [](int x, int y) { return std::make_pair(x--, y); },
-//         [](int x, int y) { return std::make_pair(x, y++); },
-//         [](int x, int y) { return std::make_pair(x, y--); },
-//         [](int x, int y) { return std::make_pair(x++, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y--); },
-//         [](int x, int y) { return std::make_pair(x++, y--); },
-//     },
-//     {
-//         [](int x, int y) { return std::make_pair(x++, y); },
-//         [](int x, int y) { return std::make_pair(x--, y); },
-//         [](int x, int y) { return std::make_pair(x, y++); },
-//         [](int x, int y) { return std::make_pair(x, y--); },
-//     },
-//     {
-//         [](int x, int y) { return std::make_pair(x++, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y--); },
-//         [](int x, int y) { return std::make_pair(x++, y--); },
-//     },
-//     {
-//         [](int x, int y) { return std::make_pair(x += 2, y++); },
-//         [](int x, int y) { return std::make_pair(x++, y += 2); },
-//         [](int x, int y) { return std::make_pair(x += 2, y--); },
-//         [](int x, int y) { return std::make_pair(x--, y += 2); },
-//         [](int x, int y) { return std::make_pair(x -= 2, y++); },
-//         [](int x, int y) { return std::make_pair(x++, y -= 2); },
-//         [](int x, int y) { return std::make_pair(x -= 2, y--); },
-//         [](int x, int y) { return std::make_pair(x--, y -= 2); },
-//     },
-//     {
-//         [](int x, int y) { return std::make_pair(x++, y); },
-//         [](int x, int y) { return std::make_pair(x++, y++); },
-//         [](int x, int y) { return std::make_pair(x++, y--); },
-//     },
-//     {
-//         [](int x, int y) { return std::make_pair(x++, y); },
-//         [](int x, int y) { return std::make_pair(x--, y); },
-//         [](int x, int y) { return std::make_pair(x, y++); },
-//         [](int x, int y) { return std::make_pair(x, y--); },
-//         [](int x, int y) { return std::make_pair(x++, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y++); },
-//         [](int x, int y) { return std::make_pair(x--, y--); },
-//         [](int x, int y) { return std::make_pair(x++, y--); },
-//     },
-// };
 
 enum class Color : int {
     black,
@@ -116,7 +30,7 @@ public:
         : color(c)
     {}
 
-    virtual char        to_char();
+    virtual const char* to_char();
     virtual std::string to_string();
 
 private:
@@ -135,7 +49,7 @@ class King : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
@@ -144,7 +58,7 @@ class Queen : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
@@ -153,7 +67,7 @@ class Bishop : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
@@ -162,7 +76,7 @@ class Knight : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
@@ -171,7 +85,7 @@ class Tower : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
@@ -180,11 +94,12 @@ class Pawn : public Piece {
 
     using Piece::Piece;
 
-    char        to_char();
+    const char* to_char();
     std::string to_string();
 };
 
 std::unique_ptr<Piece> place_piece(int pos);
+bool                   can_en_passant(Board const& board, Pos pos);
 
 // enum class Piece_type : int {
 //     Queen,

@@ -5,7 +5,6 @@
 class Game {
 private:
     Color current_player{Color::white};
-    int   n_turn{0};
 
     std::pair<float, float> time;
     int                     increment;
@@ -14,7 +13,6 @@ private:
     Pos                                                 selected_piece_pos{};
     std::vector<Pos>                                    possible_moves{};
     std::pair<std::vector<Piece*>, std::vector<Piece*>> captured_pieces{{}, {}};
-    std::vector<std::pair<Piece*, Pos>>                 move_history{};
 
 public:
     Board board{};

@@ -38,30 +38,46 @@ Piece* Board::at(Pos pos) const
         return nullptr;
 }
 
-Piece* Board::move(Pos current_pos, Pos new_pos)
+void Board::move(Pos current_pos, Pos new_pos)
 {
-    Piece* taken_piece{nullptr};
+    this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
 
-    if (this->at(new_pos) != nullptr)
-        taken_piece = take(new_pos);
+    this->_board[coord_to_line(new_pos)]     = std::move(this->_board.at(coord_to_line(current_pos)));
+    this->_board[coord_to_line(current_pos)] = nullptr;
+}
+
+Piece* Board::take(Pos current_pos, Pos new_pos, bool en_passant)
+{
+    this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
+
+    Piece* captured_piece{this->at(new_pos)};
+
+    if (en_passant)
+    {
+        captured_piece = this->at(this->at(current_pos)->get_color() == Color::white ? new_pos.incr_y(-1) : new_pos.incr_y(1));
+
+        this->_board[coord_to_line(this->at(current_pos)->get_color() == Color::white ? new_pos.incr_y(-1) : new_pos.incr_y(1))] = nullptr;
+    }
 
     this->_board[coord_to_line(new_pos)]     = std::move(this->_board.at(coord_to_line(current_pos)));
     this->_board[coord_to_line(current_pos)] = nullptr;
 
-    return taken_piece;
-}
-Piece* Board::take(Pos pos)
-{
-    Piece* captured_piece               = this->at(pos);
-    this->_board.at(coord_to_line(pos)) = nullptr;
     return captured_piece;
+}
+
+std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
+{
+    if (this->move_history.size() != 0)
+        return this->move_history.back();
+    else
+        return std::nullopt;
 }
 
 bool Board::is_in_board(Pos pos) const
 {
-    return ((pos.x >= 0 || pos.x < 8) && (pos.y >= 0 || pos.y < 8));
+    return ((pos.x >= 0 && pos.x < 8) && (pos.y >= 0 && pos.y < 8));
 }
 Tile_State Board::tile_state(Pos pos, Color color) const
 {
-    return (this->at(pos) != nullptr ? (this->at(pos)->get_color() == color) ? Tile_State::ally : Tile_State::enemy : Tile_State::empty);
+    return (this->at(pos) != nullptr ? ((this->at(pos)->get_color() == color) ? Tile_State::ally : Tile_State::enemy) : Tile_State::empty);
 }
