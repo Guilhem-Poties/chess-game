@@ -20,6 +20,7 @@ enum class Tile_State : int {
     empty
 };
 
+// Structure for Positions with increase options
 struct Pos {
     int x;
     int y;
@@ -55,13 +56,14 @@ public:
     void   move(Pos current_pos, Pos new_pos);
     Piece* take(Pos current_pos, Pos new_pos, bool en_passant);
 
+    // Get the last move from the move_history
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const;
 
     bool       is_in_board(Pos pos) const;
     Tile_State tile_state(Pos, Color color) const;
 };
-
+// Written the coordonates in chess language (ex : C4)
 std::string get_case_written_coordonates(Pos coordonates);
 
-int coord_to_line(Pos pos);
-Pos line_to_coord(int l);
+int pos_to_line(Pos pos);
+Pos line_to_pos(int l);

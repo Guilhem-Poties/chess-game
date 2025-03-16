@@ -29,7 +29,7 @@ int main()
             {
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
-                    if (game.is_in_move_set(line_to_coord(i)))
+                    if (game.is_in_move_set(line_to_pos(i)))
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 0.7f});
                     else
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 1.f});
@@ -37,7 +37,7 @@ int main()
                 }
                 else
                 {
-                    if (game.is_in_move_set(line_to_coord(i)))
+                    if (game.is_in_move_set(line_to_pos(i)))
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 0.7f});
                     else
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 1.f});
@@ -46,16 +46,16 @@ int main()
 
                 ImGui::PushID(i);
 
-                if (ImGui::Button(game.board.at(line_to_coord(i)) == nullptr ? "" : game.board.at(line_to_coord(i))->to_char(), ImVec2{50.f, 50.f}))
+                if (ImGui::Button(game.board.at(line_to_pos(i)) == nullptr ? "" : game.board.at(line_to_pos(i))->to_char(), ImVec2{50.f, 50.f}))
 
                 {
-                    std::cout << "Clicked button " + get_case_written_coordonates(line_to_coord(i)) + "\n";
-                    if (game.board.at(line_to_coord(i)) == nullptr)
+                    std::cout << "Clicked button " + get_case_written_coordonates(line_to_pos(i)) + "\n";
+                    if (game.board.at(line_to_pos(i)) == nullptr)
                         std::cout << "Vide \n";
                     else
-                        std::cout << game.board.at(line_to_coord(i))->to_string() + "\n";
+                        std::cout << game.board.at(line_to_pos(i))->to_string() + "\n";
 
-                    game.update(line_to_coord(i));
+                    game.update(line_to_pos(i));
                 }
 
                 ImGui::PopID();
@@ -84,7 +84,7 @@ int main()
 
             //         ImGui::PushID(i * 10 + j);
             //         if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-            //             std::cout << "Clicked button " + get_case_written_coordonates({i, j}) + "\n";
+            //             std::cout << "Clicked button " + get_case_written_posonates({i, j}) + "\n";
 
             //         ImGui::PopID();
             //         ImGui::PopStyleColor();

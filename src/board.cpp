@@ -7,24 +7,17 @@ std::string get_case_written_coordonates(Pos coordonates)
 
 void Board::generate_board()
 {
-    // this->_board = { {std::make_unique<Tower>(Color::black), std::make_unique<Knight>(Color::white), std::make_unique<Bishop>(Color::white), std::make_unique<King>(Color::white), std::make_unique<Queen>(Color::white), std::make_unique<Bishop>(Color::white), std::make_unique<Knight>(Color::white), std::make_unique<Tower>(Color::white)},
-    //                  {std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white), std::make_unique<Pawn>(Color::white)},
-    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-    //                  {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr},
-    // }
     for (size_t pos = 0; pos < 64; pos++)
     {
         this->_board.emplace_back(place_piece(pos));
     }
 }
 
-int coord_to_line(Pos pos)
+int pos_to_line(Pos pos)
 {
     return pos.x + (pos.y * 8);
 }
-Pos line_to_coord(int l)
+Pos line_to_pos(int l)
 {
     return {l % 8, l / 8};
 }
@@ -33,7 +26,7 @@ Pos line_to_coord(int l)
 Piece* Board::at(Pos pos) const
 {
     if (is_in_board(pos))
-        return this->_board.at(coord_to_line(pos)).get();
+        return this->_board.at(pos_to_line(pos)).get();
     else
         return nullptr;
 }
@@ -42,8 +35,8 @@ void Board::move(Pos current_pos, Pos new_pos)
 {
     this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
 
-    this->_board[coord_to_line(new_pos)]     = std::move(this->_board.at(coord_to_line(current_pos)));
-    this->_board[coord_to_line(current_pos)] = nullptr;
+    this->_board[pos_to_line(new_pos)]     = std::move(this->_board.at(pos_to_line(current_pos)));
+    this->_board[pos_to_line(current_pos)] = nullptr;
 }
 
 Piece* Board::take(Pos current_pos, Pos new_pos, bool en_passant)
@@ -56,11 +49,11 @@ Piece* Board::take(Pos current_pos, Pos new_pos, bool en_passant)
     {
         captured_piece = this->at(this->at(current_pos)->get_color() == Color::white ? new_pos.incr_y(-1) : new_pos.incr_y(1));
 
-        this->_board[coord_to_line(this->at(current_pos)->get_color() == Color::white ? new_pos.incr_y(-1) : new_pos.incr_y(1))] = nullptr;
+        this->_board[pos_to_line(this->at(current_pos)->get_color() == Color::white ? new_pos.incr_y(-1) : new_pos.incr_y(1))] = nullptr;
     }
 
-    this->_board[coord_to_line(new_pos)]     = std::move(this->_board.at(coord_to_line(current_pos)));
-    this->_board[coord_to_line(current_pos)] = nullptr;
+    this->_board[pos_to_line(new_pos)]     = std::move(this->_board.at(pos_to_line(current_pos)));
+    this->_board[pos_to_line(current_pos)] = nullptr;
 
     return captured_piece;
 }

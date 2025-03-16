@@ -37,6 +37,7 @@ std::vector<Pos> King::get_all_possible_moves(Board const& board, Pos pos)
             }
         }
     }
+
     return current_possible_moves;
 }
 const char* King::to_char()
@@ -241,9 +242,9 @@ std::string Pawn::to_string()
 
 std::unique_ptr<Piece> place_piece(int pos)
 {
-    if (int y = line_to_coord(pos).y; y == 0)
+    if (int y = line_to_pos(pos).y; y == 0)
     {
-        switch (pieces_alignement[line_to_coord(pos).x])
+        switch (pieces_alignement[line_to_pos(pos).x])
         {
         case 3:
             return std::make_unique<Tower>(Color::white);
@@ -261,7 +262,7 @@ std::unique_ptr<Piece> place_piece(int pos)
     }
     else if (y == 7)
     {
-        switch (pieces_alignement[line_to_coord(pos).x])
+        switch (pieces_alignement[line_to_pos(pos).x])
         {
         case 3:
             return std::make_unique<Tower>(Color::black);

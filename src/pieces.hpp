@@ -98,42 +98,7 @@ class Pawn : public Piece {
     std::string to_string();
 };
 
+// Place a piece on the board
 std::unique_ptr<Piece> place_piece(int pos);
-bool                   can_en_passant(Board const& board, Pos pos);
-
-// enum class Piece_type : int {
-//     Queen,
-//     Tower,
-//     Bishop,
-//     Knight,
-//     Pawn,
-//     King
-// };
-
-// class Piece {
-// private:
-//     int pos_x{};
-//     int pos_y{};
-
-//     int value;
-
-//     bool as_moved{false};
-
-// public:
-//     Piece_type type{};
-//     Color      color{};
-
-//     Piece(Piece_type piece_type, Color color, int pos_x, int pos_y);
-
-//     // The piece move
-//     void move(int pos_x, int pos_y);
-//     // The piece is taken and removed from the board
-//     void remove();
-//     // Take another piece, return the value of the taken piece
-//     int take(Piece taken_piece);
-
-//     std::pair<int, int> get_coordonates();
-
-//     // Get the possible moves of the piece
-//     std::vector<std::pair<int, int>> get_moves();
-// };
+// Chack if a piece can do en passant
+bool can_en_passant(Board const& board, Pos pos);
