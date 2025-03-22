@@ -10,18 +10,16 @@ int main()
 
     Game game{10.f, 5};
 
-    game.board.generate_board();
+    game.start();
 
     quick_imgui::loop(
         "Chess",
-        /* init: */ [&]() {},
+        /* init: */ [&]() { ImGui::GetStyle().ItemSpacing = ImVec2(0.0f, 0.0f); },
         /* loop: */
         [&]() {
             ImGui::ShowDemoWindow(); // This opens a window which shows tons of examples of what you can do with ImGui. You should check it out! Also, you can use the "Item Picker" in the top menu of that demo window: then click on any widget and it will show you the corresponding code directly in your IDE!
 
-            ImGui::Begin("Example");
-
-            ImGui::SliderFloat("My Value", &value, 0.f, 3.f);
+            ImGui::Begin("Chess");
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
@@ -115,7 +113,6 @@ int main()
 
             // ImGui::PopStyleColor();
 
-            ImGui::End();
-        }
+            ImGui::End(); }
     );
 }

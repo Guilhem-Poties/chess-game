@@ -46,6 +46,7 @@ class Board {
 private:
     std::vector<std::unique_ptr<Piece>>                 _board{};
     std::vector<std::pair<Piece*, std::pair<Pos, Pos>>> move_history{};
+    std::vector<std::vector<Pos>>                       all_moves{};
 
 public:
     Board(){};
@@ -56,8 +57,14 @@ public:
     void   move(Pos current_pos, Pos new_pos);
     Piece* take(Pos current_pos, Pos new_pos, bool en_passant);
 
+    // Calculate all the possibles moves
+    void calculate_all_moves();
+    void reset_all_moves();
     // Get the last move from the move_history
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const;
+    std::vector<Pos>                                      get_piece_move(Pos pos) const;
+
+    bool is_move_in_enemy_range(Pos move, Color color) const;
 
     bool       is_in_board(Pos pos) const;
     Tile_State tile_state(Pos, Color color) const;

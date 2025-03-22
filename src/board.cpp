@@ -58,12 +58,53 @@ Piece* Board::take(Pos current_pos, Pos new_pos, bool en_passant)
     return captured_piece;
 }
 
+void Board::calculate_all_moves()
+{
+    std::vector<std::vector<Pos>> all_adjusted_moves{};
+
+    // this->all_moves = {};
+    for (size_t i = 0; i < this->_board.size(); i++)
+    {
+        if (Piece* piece = this->at(line_to_pos(i)); piece != nullptr)
+            all_adjusted_moves.push_back(piece->get_possible_moves(*this, line_to_pos(i)));
+        else
+            all_adjusted_moves.push_back({});
+    }
+
+    if (this->all_moves != all_adjusted_moves)
+    {
+        this->all_moves = all_adjusted_moves;
+        this->calculate_all_moves();
+    }
+}
+void Board::reset_all_moves()
+{
+    this->all_moves = {};
+    this->calculate_all_moves();
+}
 std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
 {
     if (this->move_history.size() != 0)
         return this->move_history.back();
     else
         return std::nullopt;
+}
+std::vector<Pos> Board::get_piece_move(Pos pos) const
+{
+    return this->all_moves.at(pos_to_line(pos));
+}
+bool Board::is_move_in_enemy_range(Pos move, Color color) const
+{
+    for (size_t i{0}; i < this->all_moves.size(); i++)
+    {
+        if (this->tile_state(line_to_pos(i), color) == Tile_State::enemy)
+        {
+            std::cout << "enemy " << i << "\n";
+            if (std::find(this->all_moves.at(i).begin(), this->all_moves.at(i).end(), move) != this->all_moves.at(i).end())
+                return true;
+        }
+    }
+    return false;
 }
 
 bool Board::is_in_board(Pos pos) const

@@ -1,5 +1,10 @@
 #include "game.hpp"
 
+void Game::start()
+{
+    this->board.generate_board();
+    this->board.calculate_all_moves();
+}
 void Game::update(Pos pos)
 {
     // If the selected piece is the same color as the current player we select this piece
@@ -28,6 +33,8 @@ void Game::update(Pos pos)
         this->possible_moves     = {};
 
         this->switch_player();
+
+        this->board.reset_all_moves();
     }
 
     // Otherwise, nothing happens
@@ -53,7 +60,7 @@ void Game::select_piece(Pos pos)
 {
     if (auto piece = this->board.at(pos); piece != nullptr)
     {
-        this->possible_moves     = piece->get_all_possible_moves(this->board, pos);
+        this->possible_moves     = this->board.get_piece_move(pos);
         this->selected_piece_pos = pos;
         this->selected_piece     = true;
     }
