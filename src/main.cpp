@@ -1,10 +1,18 @@
 #include <imgui.h>
 #include <iostream>
-#include <vector>
+// #include <vector>
 #include "game.hpp"
+#include "glad/glad.h"
+#include "glimac/Program.hpp"
+#include "glm/glm.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
-int main()
+struct Vertex3DColor {
+    glm::vec3 position;
+    glm::vec3 color;
+};
+
+int main(int argc, char** argv)
 {
     float value{0.f};
 
@@ -12,11 +20,56 @@ int main()
 
     game.start();
 
+    glimac::FilePath               applicationPath(argv[0]);
+    std::optional<glimac::Program> program;
+
+    GLuint vbo;
+    GLuint vao;
+
     quick_imgui::loop(
         "Chess",
-        /* init: */ [&]() { ImGui::GetStyle().ItemSpacing = ImVec2(0.0f, 0.0f); },
-        /* loop: */
-        [&]() {
+        {
+            .init = [&]() {
+
+                program = loadProgram(applicationPath.dirPath() + "res/shader.vs.glsl", applicationPath.dirPath() + "res/shader.fs.glsl");
+                program->use();
+
+                /*VBO*/
+                glGenBuffers(1, &vbo);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                Vertex3DColor vertices[] = {
+                    Vertex3DColor{glm::vec3(-0.5, -0.5, 0), glm::vec3(1, 0, 0)}, // NOLINT(*modernize-use-designated-initializers)
+                    Vertex3DColor{glm::vec3(0.5, -0.5, 0), glm::vec3(0, 1, 0)}, // NOLINT(*modernize-use-designated-initializers)
+                    Vertex3DColor{glm::vec3(-0.5, 0.5, 0), glm::vec3(0, 0, 1)}, // NOLINT(*modernize-use-designated-initializers)
+
+                    Vertex3DColor{glm::vec3(0.5, 0.5, 0), glm::vec3(1, 0, 0)}, // NOLINT(*modernize-use-designated-initializers)
+                    Vertex3DColor{glm::vec3(0.5, -0.5, 0), glm::vec3(0, 1, 0)}, // NOLINT(*modernize-use-designated-initializers)
+                    Vertex3DColor{glm::vec3(-0.5, 0.5, 0), glm::vec3(0, 0, 1)} // NOLINT(*modernize-use-designated-initializers)
+                };
+                glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex3DColor), vertices, GL_STATIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+                /*VAO*/
+                glGenVertexArrays(1, &vao);
+                glBindVertexArray(vao);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(8);
+                glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3DColor), (void*)offsetof(Vertex3DColor, position));
+                glVertexAttribPointer(8, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3DColor), (void*)offsetof(Vertex3DColor, color));
+                glBindVertexArray(0);
+                glBindBuffer(GL_ARRAY_BUFFER, 0); },
+            // .key_callback = []()
+
+            .loop = [&]() {
+                
+                glClearColor(1.f, 0.5f, 0.5f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                glBindVertexArray(vao);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                glBindVertexArray(0);
+
             ImGui::ShowDemoWindow(); // This opens a window which shows tons of examples of what you can do with ImGui. You should check it out! Also, you can use the "Item Picker" in the top menu of that demo window: then click on any widget and it will show you the corresponding code directly in your IDE!
 
             ImGui::Begin("Chess");
@@ -60,7 +113,7 @@ int main()
                 ImGui::PopStyleColor();
 
                 if (i % 8 == 7)
-                    ImGui::NewLine();
+                {}
                 else
                     ImGui::SameLine();
             }
@@ -113,6 +166,9 @@ int main()
 
             // ImGui::PopStyleColor();
 
-            ImGui::End(); }
+            ImGui::End(); },
+        }
     );
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
 }
