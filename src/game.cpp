@@ -20,11 +20,11 @@ void Game::update(Pos pos)
             capture_piece(this->board.take(this->selected_piece_pos, pos, false));
 
         // Check if the player took en passant
-        else if (can_en_passant(this->board, this->board.at(this->selected_piece_pos)->get_color() == Color::white ? pos.incr_y(-1) : pos.incr_y(1)))
+        else if (can_en_passant(this->board, get_en_passant_pos(this->board.at(this->selected_piece_pos)->get_color(), pos)))
             capture_piece(this->board.take(this->selected_piece_pos, pos, true));
 
         else
-            this->board.move(this->selected_piece_pos, pos);
+            this->board.move(this->selected_piece_pos, pos, can_en_passant(this->board, this->board.at(this->selected_piece_pos)->get_color() == Color::white ? pos.incr_y(-1) : pos.incr_y(1)));
 
         // Reset the variables and mention that the piece has been moved
         this->board.at(pos)->moved_piece();

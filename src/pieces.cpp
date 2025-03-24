@@ -198,6 +198,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos)
     };
     std::vector<Pos> current_possible_moves{};
 
+    // If the pawn hasn't moved yet, he wan move on a additionnal square
     if (!this->has_moved())
         all_moves.push_back({0, 2});
 
@@ -214,11 +215,13 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos)
     for (Pos pos_add : all_attacks)
     {
         Pos move = this->get_color() == Color::white ? pos + pos_add : pos - pos_add;
-        Pos en_passant_pos{move};
-        if (this->get_color() == Color::white)
-            en_passant_pos.y -= 1;
-        else
-            en_passant_pos.y += 1;
+
+        // Calulate wether the an passant should be depending of the pawn color/direction
+        Pos en_passant_pos{get_en_passant_pos(this->get_color(), move)};
+        // if (this->get_color() == Color::white)
+        //     en_passant_pos.y -= 1;
+        // else
+        //     en_passant_pos.y += 1;
 
         if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)))
         {
@@ -284,9 +287,10 @@ std::unique_ptr<Piece> place_piece(int pos)
     // else if (pos == 29)
     //     return std::make_unique<Tower>(Color::black);
 
-    // else
-    //     return nullptr;
+    else
+        return nullptr;
 }
+
 // // Take the board and the pos where there would might be a pawn to take en passant
 bool can_en_passant(Board const& board, Pos pos)
 {
@@ -309,4 +313,8 @@ bool can_en_passant(Board const& board, Pos pos)
         return false;
 
     // return board.get_last_move().has_value() && (dynamic_cast<Pawn*>(board.get_last_move().value().first) && board.at(pos) == board.get_last_move().value().first) && board.get_last_move().value().second.first;
+}
+Pos get_en_passant_pos(Color pawn_color, Pos pawn_pos)
+{
+    return pawn_color == Color::white ? pawn_pos.incr_y(-1) : pawn_pos.incr_y(1);
 }

@@ -102,3 +102,4 @@ class Pawn : public Piece {
 std::unique_ptr<Piece> place_piece(int pos);
 // Chack if a piece can do en passant
 bool can_en_passant(Board const& board, Pos pos);
+Pos  get_en_passant_pos(Color pawn_color, Pos pawn_pos);
