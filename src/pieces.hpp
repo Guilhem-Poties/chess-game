@@ -25,6 +25,7 @@ public:
     Color get_color() const { return color; }
     bool  has_moved() const { return this->moved; }
     void  moved_piece() { this->moved = true; }
+    void  pin_piece() { this->pined = true; }
 
     Piece(Color c)
         : color(c)
@@ -37,6 +38,7 @@ private:
     Color color;
     bool  moved{false};
     int   value;
+    bool  pined{}; // Pined means that the piece protects the king and can't move out of his protection
 };
 
 // enum class Direction{

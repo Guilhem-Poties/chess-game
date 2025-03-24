@@ -218,10 +218,6 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos)
 
         // Calulate wether the an passant should be depending of the pawn color/direction
         Pos en_passant_pos{get_en_passant_pos(this->get_color(), move)};
-        // if (this->get_color() == Color::white)
-        //     en_passant_pos.y -= 1;
-        // else
-        //     en_passant_pos.y += 1;
 
         if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)))
         {
