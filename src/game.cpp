@@ -15,16 +15,10 @@ void Game::update(Pos pos)
     // If the selected case is in the pieces possible moves, we move it and switch players
     else if (this->selected_piece && is_in_move_set(pos))
     {
-        // Check if the player took directly a piece
-        if (this->board.at(this->selected_piece_pos))
-            capture_piece(this->board.take(this->selected_piece_pos, pos, false));
+        // If there an en passant take is possible from this move, it means that the player has selected it
+        bool en_passant{can_en_passant(this->board, get_en_passant_pos(this->board.at(this->selected_piece_pos)->get_color(), pos))};
 
-        // Check if the player took en passant
-        else if (can_en_passant(this->board, get_en_passant_pos(this->board.at(this->selected_piece_pos)->get_color(), pos)))
-            capture_piece(this->board.take(this->selected_piece_pos, pos, true));
-
-        else
-            this->board.move(this->selected_piece_pos, pos, can_en_passant(this->board, this->board.at(this->selected_piece_pos)->get_color() == Color::white ? pos.incr_y(-1) : pos.incr_y(1)));
+        capture_piece(this->board.move(this->selected_piece_pos, pos, en_passant));
 
         // Reset the variables and mention that the piece has been moved
         this->board.at(pos)->moved_piece();
@@ -49,12 +43,15 @@ void Game::switch_player()
     else
         this->current_player = Color::white;
 };
-void Game::capture_piece(Piece* piece)
+void Game::capture_piece(std::optional<Piece*> piece)
 {
-    if (this->current_player == Color::white)
-        this->captured_pieces.first.push_back(piece);
-    else
-        this->captured_pieces.second.push_back(piece);
+    if (piece == nullptr)
+    {
+        if (this->current_player == Color::white)
+            this->captured_pieces.first.push_back(piece.value());
+        else
+            this->captured_pieces.second.push_back(piece.value());
+    }
 };
 void Game::select_piece(Pos pos)
 {

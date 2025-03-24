@@ -35,8 +35,19 @@ std::optional<Piece*> Board::move(Pos current_pos, Pos new_pos, bool en_passant)
 {
     this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
 
+    Piece* captured_piece{this->at(new_pos)};
+
+    if (en_passant)
+    {
+        captured_piece = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
+
+        this->_board[pos_to_line(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos))] = nullptr;
+    }
+
     this->_board[pos_to_line(new_pos)]     = std::move(this->_board.at(pos_to_line(current_pos)));
     this->_board[pos_to_line(current_pos)] = nullptr;
+
+    return captured_piece;
 }
 
 Piece* Board::take(Pos current_pos, Pos new_pos, bool en_passant)
