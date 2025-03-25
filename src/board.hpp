@@ -46,6 +46,7 @@ class Board {
 private:
     std::vector<std::unique_ptr<Piece>>                 _board{};
     std::vector<std::pair<Piece*, std::pair<Pos, Pos>>> move_history{};
+    std::vector<std::vector<Pos>>                       all_moves{};
 
 public:
     Board(){};
@@ -53,11 +54,22 @@ public:
 
     Piece* at(Pos) const;
 
-    void   move(Pos current_pos, Pos new_pos);
-    Piece* take(Pos current_pos, Pos new_pos, bool en_passant);
+    std::optional<Piece*> move(Pos current_pos, Pos new_pos, bool en_passant);
 
-    // Get the last move from the move_history
+    // Calculate all the possibles moves and stock them in the all_moves variable
+    void calculate_all_moves();
+    void reset_all_moves();
+    // Get the last move from the move history
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const;
+    std::vector<Pos>                                      get_piece_move(Pos pos) const;
+
+    // Functions to prevent checks
+    std::vector<Pos>                              is_check(Color player);
+    Pos                                           king_pos(Color king_color);
+    bool                                          is_checkmate(std::vector<Pos>);
+    std::vector<std::vector<Pos>>                 is_king_attacked(Pos king_pos, Color king_color);
+    std::vector<std::pair<Pos, std::vector<Pos>>> is_defendable(std::vector<std::pair<Pos, std::vector<Pos>>> attackers);
+    bool                                          is_move_in_enemy_range(Pos move, Color color) const;
 
     bool       is_in_board(Pos pos) const;
     Tile_State tile_state(Pos, Color color) const;

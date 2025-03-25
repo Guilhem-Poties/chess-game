@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 
     Game game{10.f, 5};
 
-    game.board.generate_board();
+    game.start();
 
     glimac::FilePath               applicationPath(argv[0]);
     std::optional<glimac::Program> program;
@@ -70,11 +70,7 @@ int main(int argc, char** argv)
                 glDrawArrays(GL_TRIANGLES, 0, 6);
                 glBindVertexArray(0);
 
-            ImGui::ShowDemoWindow(); // This opens a window which shows tons of examples of what you can do with ImGui. You should check it out! Also, you can use the "Item Picker" in the top menu of that demo window: then click on any widget and it will show you the corresponding code directly in your IDE!
-
-            ImGui::Begin("Example");
-
-            ImGui::SliderFloat("My Value", &value, 0.f, 3.f);
+            ImGui::Begin("Chess");
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 

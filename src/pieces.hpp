@@ -20,11 +20,12 @@ enum class Color : int {
 
 class Piece {
 public:
-    virtual std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) = 0;
+    virtual std::vector<Pos> get_possible_moves(Board const& board, Pos pos) = 0;
 
     Color get_color() const { return color; }
     bool  has_moved() const { return this->moved; }
     void  moved_piece() { this->moved = true; }
+    void  pin_piece() { this->pined = true; }
 
     Piece(Color c)
         : color(c)
@@ -37,6 +38,7 @@ private:
     Color color;
     bool  moved{false};
     int   value;
+    bool  pined{}; // Pined means that the piece protects the king and can't move out of his protection
 };
 
 // enum class Direction{
@@ -45,7 +47,7 @@ private:
 // }
 
 class King : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -54,7 +56,7 @@ class King : public Piece {
 };
 
 class Queen : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -63,7 +65,7 @@ class Queen : public Piece {
 };
 
 class Bishop : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -72,7 +74,7 @@ class Bishop : public Piece {
 };
 
 class Knight : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -81,7 +83,7 @@ class Knight : public Piece {
 };
 
 class Tower : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -90,7 +92,7 @@ class Tower : public Piece {
 };
 
 class Pawn : public Piece {
-    std::vector<Pos> get_all_possible_moves(Board const& board, Pos pos) override;
+    std::vector<Pos> get_possible_moves(Board const& board, Pos pos) override;
 
     using Piece::Piece;
 
@@ -102,3 +104,4 @@ class Pawn : public Piece {
 std::unique_ptr<Piece> place_piece(int pos);
 // Chack if a piece can do en passant
 bool can_en_passant(Board const& board, Pos pos);
+Pos  get_en_passant_pos(Color pawn_color, Pos pawn_pos);

@@ -11,7 +11,7 @@ std::string Piece::to_string()
 }
 
 // King
-std::vector<Pos> King::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> King::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{
         {1, 1},
@@ -20,7 +20,8 @@ std::vector<Pos> King::get_all_possible_moves(Board const& board, Pos pos)
         {-1, 0},
         {-1, -1},
         {0, -1},
-        {1, -1}
+        {1, -1},
+        {1, 0}
     };
 
     std::vector<Pos> current_possible_moves{};
@@ -29,13 +30,8 @@ std::vector<Pos> King::get_all_possible_moves(Board const& board, Pos pos)
     {
         Pos move = pos + pos_add;
 
-        if (board.is_in_board(move))
-        {
-            if (board.tile_state(move, get_color()) != Tile_State::ally)
-            {
-                current_possible_moves.emplace_back(move);
-            }
-        }
+        if (board.is_in_board(move) && board.tile_state(move, this->get_color()) != Tile_State::ally && !board.is_move_in_enemy_range(move, this->get_color()))
+            current_possible_moves.emplace_back(move);
     }
 
     return current_possible_moves;
@@ -50,7 +46,7 @@ std::string King::to_string()
 }
 
 // Queen
-std::vector<Pos> Queen::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> Queen::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{
         {1, 1},
@@ -88,7 +84,7 @@ std::string Queen::to_string()
 }
 
 // Bishop
-std::vector<Pos> Bishop::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> Bishop::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{
         {1, 1},
@@ -122,7 +118,7 @@ std::string Bishop::to_string()
 }
 
 // Knight
-std::vector<Pos> Knight::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> Knight::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{
         {2, 1},
@@ -159,7 +155,7 @@ std::string Knight::to_string()
 }
 
 // Tower
-std::vector<Pos> Tower::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> Tower::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{
         {0, 1},
@@ -193,7 +189,7 @@ std::string Tower::to_string()
 }
 
 // Pawn
-std::vector<Pos> Pawn::get_all_possible_moves(Board const& board, Pos pos)
+std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos)
 {
     std::vector<Pos> all_moves{{0, 1}};
     std::vector<Pos> all_attacks{
@@ -202,6 +198,7 @@ std::vector<Pos> Pawn::get_all_possible_moves(Board const& board, Pos pos)
     };
     std::vector<Pos> current_possible_moves{};
 
+    // If the pawn hasn't moved yet, he wan move on a additionnal square
     if (!this->has_moved())
         all_moves.push_back({0, 2});
 
@@ -218,11 +215,9 @@ std::vector<Pos> Pawn::get_all_possible_moves(Board const& board, Pos pos)
     for (Pos pos_add : all_attacks)
     {
         Pos move = this->get_color() == Color::white ? pos + pos_add : pos - pos_add;
-        Pos en_passant_pos{move};
-        if (this->get_color() == Color::white)
-            en_passant_pos.y -= 1;
-        else
-            en_passant_pos.y += 1;
+
+        // Calulate wether the an passant should be depending of the pawn color/direction
+        Pos en_passant_pos{get_en_passant_pos(this->get_color(), move)};
 
         if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)))
         {
@@ -282,10 +277,17 @@ std::unique_ptr<Piece> place_piece(int pos)
         return std::make_unique<Pawn>(Color::white);
     else if (y == 6)
         return std::make_unique<Pawn>(Color::black);
+
+    // if (pos == 20)
+    //     return std::make_unique<King>(Color::white);
+    // else if (pos == 29)
+    //     return std::make_unique<Tower>(Color::black);
+
     else
         return nullptr;
 }
-// Take the board and the pos where there would might be a pawn to take en passant
+
+// // Take the board and the pos where there would might be a pawn to take en passant
 bool can_en_passant(Board const& board, Pos pos)
 {
     if (board.get_last_move().has_value())
@@ -295,7 +297,6 @@ bool can_en_passant(Board const& board, Pos pos)
         {
             if (last_move.second.first.y == last_move.second.second.y - 2 || last_move.second.first.y == last_move.second.second.y + 2)
             {
-                std::cout << pos.x << " " << pos.y << "\n";
                 return board.at(pos) == last_move.first;
             }
             else
@@ -306,5 +307,10 @@ bool can_en_passant(Board const& board, Pos pos)
     }
     else
         return false;
+
     // return board.get_last_move().has_value() && (dynamic_cast<Pawn*>(board.get_last_move().value().first) && board.at(pos) == board.get_last_move().value().first) && board.get_last_move().value().second.first;
+}
+Pos get_en_passant_pos(Color pawn_color, Pos pawn_pos)
+{
+    return pawn_color == Color::white ? pawn_pos.incr_y(-1) : pawn_pos.incr_y(1);
 }
