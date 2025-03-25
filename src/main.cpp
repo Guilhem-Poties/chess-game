@@ -12,6 +12,16 @@ struct Vertex3DColor {
     glm::vec3 color;
 };
 
+void load_font(const std::string& path, const float size)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.Fonts->AddFontFromFileTTF(path.c_str(), size))
+        std::cout << "Font successfully loaded : " << path << "\n";
+    else
+        std::cerr << "Failed to load font: " << path << " :("
+                  << "\n";
+}
+
 int main(int argc, char** argv)
 {
     float value{0.f};
@@ -71,6 +81,8 @@ int main(int argc, char** argv)
                 glBindVertexArray(0);
 
             ImGui::Begin("Chess");
+
+            // load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 400);
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 

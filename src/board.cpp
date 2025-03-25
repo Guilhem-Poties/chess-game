@@ -6,14 +6,9 @@ void Board::generate_board()
         this->_board.emplace_back(place_piece(pos));
     }
 }
-
-int pos_to_line(Pos pos)
+int Board::n_turns_played() const
 {
-    return pos.x + (pos.y * 8);
-}
-Pos line_to_pos(int l)
-{
-    return {l % 8, l / 8};
+    return this->move_history.size();
 }
 
 /****** Piece managment functions ******/
@@ -98,6 +93,7 @@ Pos Board::king_pos(Color king_color)
 }
 std::vector<std::vector<Pos>> Board::is_king_attacked(Pos king_pos, Color king_color)
 {
+    // Takes the same scheme as the queen movments but cheks if the piece is attacking
     std::vector<Pos> all_moves{
         {1, 1},
         {0, 1},
@@ -159,12 +155,7 @@ bool Board::is_move_in_enemy_range(Pos move, Color color) const
     return false;
 }
 
-/****** Coordonate managment functions ******/
-
-std::string get_case_written_coordonates(Pos coordonates)
-{
-    return coordonates_letter[coordonates.y] + std::to_string(coordonates.x + 1);
-}
+/****** Tile status managment ******/
 
 bool Board::is_in_board(Pos pos) const
 {
@@ -173,4 +164,19 @@ bool Board::is_in_board(Pos pos) const
 Tile_State Board::tile_state(Pos pos, Color color) const
 {
     return (this->at(pos) != nullptr ? ((this->at(pos)->get_color() == color) ? Tile_State::ally : Tile_State::enemy) : Tile_State::empty);
+}
+
+/****** Coordonate managment functions ******/
+
+std::string get_case_written_coordonates(Pos coordonates)
+{
+    return coordonates_letter[coordonates.y] + std::to_string(coordonates.x + 1);
+}
+int pos_to_line(Pos pos)
+{
+    return pos.x + (pos.y * 8);
+}
+Pos line_to_pos(int l)
+{
+    return {l % 8, l / 8};
 }
