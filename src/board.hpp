@@ -38,6 +38,11 @@ inline Pos operator-(Pos const& pos_a, Pos const& pos_b)
 {
     return {pos_a.x - pos_b.x, pos_a.y - pos_b.y};
 }
+inline Pos operator*(Pos const& pos, int mult)
+{
+    return {pos.x * 2, pos.y * 2};
+}
+
 inline bool operator==(Pos const& pos_a, Pos const& pos_b)
 {
     return ((pos_a.x == pos_b.x) && (pos_a.y == pos_b.y));
@@ -62,11 +67,13 @@ public:
     void                                                  reset_all_moves();
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
+    bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 
     // Functions to deal wu=ith checks
     bool                                          is_check(Color player);
     bool                                          is_checkmate(Color player);
     bool                                          is_stale_mate(Color player);
+    bool                                          is_king(Color piece_color, Pos piece_pos) const;
     Pos                                           king_pos(Color king_color) const;
     int                                           n_possible_moves(Color player) const;
     std::vector<std::vector<Pos>>                 king_attackers(Pos king_pos, Color king_color);

@@ -5,6 +5,7 @@ void Board::generate_board()
     {
         this->_board.emplace_back(place_piece(pos));
     }
+    this->all_moves.assign(64, {});
 }
 int Board::n_turns_played() const
 {
@@ -63,6 +64,7 @@ void Board::calculate_all_moves()
 void Board::reset_all_moves()
 {
     this->all_moves = {};
+    this->all_moves.assign(64, {});
     this->calculate_all_moves();
 }
 std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
@@ -75,6 +77,10 @@ std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() con
 std::vector<Pos> Board::get_piece_move(Pos pos) const
 {
     return this->all_moves.at(pos_to_line(pos)).second;
+}
+bool Board::is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const
+{
+    return std::find(this->all_moves.at(pos_to_line(pos_a)).second.begin(), this->all_moves.at(pos_to_line(pos_a)).second.end(), pos_b) != this->all_moves.at(pos_to_line(pos_a)).second.end();
 }
 
 /****** Check managment functions ******/
@@ -115,7 +121,10 @@ int Board::n_possible_moves(Color player) const
     std::copy_if(this->all_moves.begin(), this->all_moves.end(), std::back_inserter(player_moves), has_move);
     return player_moves.size();
 }
-
+bool Board::is_king(Color piece_color, Pos piece_pos) const
+{
+    return this->tile_state(piece_pos, piece_color) == Tile_State::ally && dynamic_cast<King*>(this->at(piece_pos));
+}
 Pos Board::king_pos(Color king_color) const
 {
     auto is_king = [king_color](const std::unique_ptr<Piece>& piece) {
@@ -172,7 +181,7 @@ std::vector<std::vector<Pos>> Board::king_attackers(Pos king_pos, Color king_col
             else if (this->tile_state(move, king_color) == Tile_State::ally)
                 pined_piece = false;
             // Check if there is a black piece and if the king is actually in the piece move range
-            else if (this->tile_state(move, king_color) == Tile_State::enemy && std::find(this->all_moves.at(pos_to_line(move)).second.begin(), this->all_moves.at(pos_to_line(move)).second.end(), king_pos) != this->all_moves.at(pos_to_line(move)).second.end())
+            else if (this->tile_state(move, king_color) == Tile_State::enemy && this->is_pos_in_piece_moveset(move, king_pos))
             {
                 // If an ally piece is in the way, it gets pined
                 if (pined_piece)
@@ -196,14 +205,57 @@ std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::ve
 }
 bool Board::is_move_in_enemy_range(Pos move, Color color) const
 {
-    for (int i{0}; i < this->all_moves.size(); i++)
+    // for (int i{0}; i < this->all_moves.size(); i++)
+    // {
+    //     if (this->tile_state(line_to_pos(i), color) == Tile_State::enemy)
+    //         if (std::find(this->all_moves.at(i).second.begin(), this->all_moves.at(i).second.end(), move) != this->all_moves.at(i).second.end())
+    //             return true;
+    // }
+    // return false;
+
+    // Takes all the possible moves in the game
+    std::vector<Pos> all_ranges{
+        {2, 1},
+        {2, -1},
+        {1, 2},
+        {-1, 2},
+        {-2, 1},
+        {-2, -1},
+        {1, -2},
+        {-1, -2},
+        {1, 1},
+        {0, 1},
+        {-1, 1},
+        {-1, 0},
+        {-1, -1},
+        {0, -1},
+        {1, -1},
+        {1, 0}
+    };
+
+    for (Pos range_add : all_ranges)
     {
-        if (this->tile_state(line_to_pos(i), color) == Tile_State::enemy)
+        Pos  range = move + range_add;
+        bool is_king_on_way{false}; // Checks if the king is on the way then the program will be aware if it cuts the range
+        while (this->is_in_board(range) || (this->tile_state(range, color) == Tile_State::ally && !this->is_king(color, range)))
         {
-            if (std::find(this->all_moves.at(i).second.begin(), this->all_moves.at(i).second.end(), move) != this->all_moves.at(i).second.end())
-                return true;
+            // Check if there is a black piece and if the king is actually in the piece move range
+            if (this->tile_state(range, color) == Tile_State::enemy)
+            {
+                // std::cout << "range : " << range.x << ", " << range.y << "\n";
+                if (this->is_pos_in_piece_moveset(range, move) || is_king_on_way && this->is_pos_in_piece_moveset(range, move + range_add * 2))
+                    return true;
+
+                else
+                    break;
+            }
+            if (this->is_king(color, range))
+                is_king_on_way = true;
+
+            range = range + range_add;
         }
     }
+
     return false;
 }
 
