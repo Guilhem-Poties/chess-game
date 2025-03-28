@@ -1,7 +1,7 @@
 #include "board.hpp"
 void Board::generate_board()
 {
-    for (size_t pos = 0; pos < 64; pos++)
+    for (int pos = 0; pos < 64; pos++)
     {
         this->_board.emplace_back(place_piece(pos));
     }
@@ -43,13 +43,13 @@ std::optional<Piece*> Board::move(Pos current_pos, Pos new_pos, bool en_passant)
 
 void Board::calculate_all_moves()
 {
-    std::vector<std::vector<Pos>> all_adjusted_moves{};
+    std::vector<std::pair<Pos, std::vector<Pos>>> all_adjusted_moves{};
 
     // this->all_moves = {};
-    for (size_t i = 0; i < this->_board.size(); i++)
+    for (int i = 0; i < this->_board.size(); i++)
     {
         if (Piece* piece = this->at(line_to_pos(i)); piece != nullptr)
-            all_adjusted_moves.push_back(piece->get_possible_moves(*this, line_to_pos(i)));
+            all_adjusted_moves.push_back(std::make_pair(line_to_pos(i), piece->get_possible_moves(*this, line_to_pos(i))));
         else
             all_adjusted_moves.push_back({});
     }
@@ -59,7 +59,6 @@ void Board::calculate_all_moves()
         this->all_moves = all_adjusted_moves;
         this->calculate_all_moves();
     }
-    this->is_king_attacked(this->king_pos(Color::white), Color::white);
 }
 void Board::reset_all_moves()
 {
@@ -75,12 +74,49 @@ std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() con
 }
 std::vector<Pos> Board::get_piece_move(Pos pos) const
 {
-    return this->all_moves.at(pos_to_line(pos));
+    return this->all_moves.at(pos_to_line(pos)).second;
 }
 
 /****** Check managment functions ******/
 
-Pos Board::king_pos(Color king_color)
+bool Board::is_check(Color player)
+{
+    Pos king_pos = this->king_pos(player);
+
+    if (auto king_attackers{this->king_attackers(king_pos, player)}; king_attackers.size() > 0)
+    {
+        return true;
+    }
+    else
+        return false;
+}
+bool Board::is_checkmate(Color player)
+{
+    if (this->n_possible_moves(player) <= 0 && is_check(player))
+        return true;
+    else
+        return false;
+}
+bool Board::is_stale_mate(Color player)
+{
+    if (this->n_possible_moves(player) <= 0 && !is_check(player))
+        return true;
+    else
+        return false;
+}
+int Board::n_possible_moves(Color player) const
+{
+    std::vector<std::pair<Pos, std::vector<Pos>>> player_moves{};
+
+    auto has_move{[player, this](const std::pair<Pos, std::vector<Pos>>& moves) {
+        return this->tile_state(moves.first, player) == Tile_State::ally && moves.second.size() > 0;
+    }}; // Check if the piece on the right color can move
+
+    std::copy_if(this->all_moves.begin(), this->all_moves.end(), std::back_inserter(player_moves), has_move);
+    return player_moves.size();
+}
+
+Pos Board::king_pos(Color king_color) const
 {
     auto is_king = [king_color](const std::unique_ptr<Piece>& piece) {
         return piece != nullptr && piece.get()->get_color() == king_color && dynamic_cast<King*>(piece.get());
@@ -91,10 +127,18 @@ Pos Board::king_pos(Color king_color)
     else
         return {-1, -1};
 }
-std::vector<std::vector<Pos>> Board::is_king_attacked(Pos king_pos, Color king_color)
+std::vector<std::vector<Pos>> Board::king_attackers(Pos king_pos, Color king_color)
 {
-    // Takes the same scheme as the queen movments but cheks if the piece is attacking
+    // Takes all the possible moves in the game
     std::vector<Pos> all_moves{
+        {2, 1},
+        {2, -1},
+        {1, 2},
+        {-1, 2},
+        {-2, 1},
+        {-2, -1},
+        {1, -2},
+        {-1, -2},
         {1, 1},
         {0, 1},
         {-1, 1},
@@ -117,16 +161,20 @@ std::vector<std::vector<Pos>> Board::is_king_attacked(Pos king_pos, Color king_c
         Pos move = king_pos + move_add;
         while (this->is_in_board(move))
         {
+            // If a piece is in the way and it's the first one, it gets pined
             if (first_ally_encountered && this->tile_state(move, king_color) == Tile_State::ally)
             {
                 pined_piece            = true;
                 pined_piece_pos        = move;
                 first_ally_encountered = false;
             }
+            // If there is a second piece in the way, it unpins the first one
             else if (this->tile_state(move, king_color) == Tile_State::ally)
                 pined_piece = false;
-            else if (this->tile_state(move, king_color) == Tile_State::enemy)
+            // Check if there is a black piece and if the king is actually in the piece move range
+            else if (this->tile_state(move, king_color) == Tile_State::enemy && std::find(this->all_moves.at(pos_to_line(move)).second.begin(), this->all_moves.at(pos_to_line(move)).second.end(), king_pos) != this->all_moves.at(pos_to_line(move)).second.end())
             {
+                // If an ally piece is in the way, it gets pined
                 if (pined_piece)
                     this->at(pined_piece_pos)->pin_piece();
                 else
@@ -136,19 +184,23 @@ std::vector<std::vector<Pos>> Board::is_king_attacked(Pos king_pos, Color king_c
             }
 
             move_stack.push_back(move);
+            move_stack.erase(move_stack.begin());
             move = move + move_add;
         }
     }
 
     return attaking_pieces;
 }
+std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::vector<Pos>> attackers)
+{
+}
 bool Board::is_move_in_enemy_range(Pos move, Color color) const
 {
-    for (size_t i{0}; i < this->all_moves.size(); i++)
+    for (int i{0}; i < this->all_moves.size(); i++)
     {
         if (this->tile_state(line_to_pos(i), color) == Tile_State::enemy)
         {
-            if (std::find(this->all_moves.at(i).begin(), this->all_moves.at(i).end(), move) != this->all_moves.at(i).end())
+            if (std::find(this->all_moves.at(i).second.begin(), this->all_moves.at(i).second.end(), move) != this->all_moves.at(i).second.end())
                 return true;
         }
     }

@@ -29,6 +29,13 @@ void Game::update(Pos pos)
         this->switch_player();
 
         this->board.reset_all_moves();
+
+        if (this->board.is_check(this->current_player))
+            std::cout << "Echec ! \n";
+        if (this->board.is_stale_mate(this->current_player))
+            std::cout << "Stale mate \n";
+        if (this->board.is_checkmate(this->current_player))
+            std::cout << "Echec et mat ! \n";
     }
 
     // Otherwise, nothing happens

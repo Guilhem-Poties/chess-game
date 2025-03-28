@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <ranges>
 #include <string>
 #include <utility>
 #include <vector>
@@ -46,7 +47,7 @@ class Board {
 private:
     std::vector<std::unique_ptr<Piece>>                 _board{};
     std::vector<std::pair<Piece*, std::pair<Pos, Pos>>> move_history{};
-    std::vector<std::vector<Pos>>                       all_moves{};
+    std::vector<std::pair<Pos, std::vector<Pos>>>       all_moves{};
 
 public:
     Board(){};
@@ -55,19 +56,21 @@ public:
 
     Piece* at(Pos) const;
 
-    // Functions to mage pieces movements
+    // Functions to manage pieces movements
     std::optional<Piece*>                                 move(Pos current_pos, Pos new_pos, bool en_passant);
     void                                                  calculate_all_moves(); // Calculate all the possibles moves and stock them in the all_moves variable
     void                                                  reset_all_moves();
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
 
-    // Functions to prevent checks
-    std::vector<Pos>                              is_check(Color player);
-    Pos                                           king_pos(Color king_color);
-    bool                                          is_checkmate(std::vector<Pos>);
-    std::vector<std::vector<Pos>>                 is_king_attacked(Pos king_pos, Color king_color);
-    std::vector<std::pair<Pos, std::vector<Pos>>> is_defendable(std::vector<std::pair<Pos, std::vector<Pos>>> attackers);
+    // Functions to deal wu=ith checks
+    bool                                          is_check(Color player);
+    bool                                          is_checkmate(Color player);
+    bool                                          is_stale_mate(Color player);
+    Pos                                           king_pos(Color king_color) const;
+    int                                           n_possible_moves(Color player) const;
+    std::vector<std::vector<Pos>>                 king_attackers(Pos king_pos, Color king_color);
+    std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::vector<Pos>> attackers);
     bool                                          is_move_in_enemy_range(Pos move, Color color) const;
 
     // Board tiles status

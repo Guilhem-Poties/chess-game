@@ -41,6 +41,8 @@ int main(int argc, char** argv)
         {
             .init = [&]() {
 
+                load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 32);
+
                 program = loadProgram(applicationPath.dirPath() + "res/shader.vs.glsl", applicationPath.dirPath() + "res/shader.fs.glsl");
                 program->use();
 
@@ -81,8 +83,6 @@ int main(int argc, char** argv)
                 glBindVertexArray(0);
 
             ImGui::Begin("Chess");
-
-            // load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 400);
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
