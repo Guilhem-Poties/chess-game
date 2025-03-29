@@ -88,12 +88,13 @@ int main(int argc, char** argv)
 
             for (size_t i = 0; i < 64; i++)
             {
+                int n_pop {1}; // Count the number of pop to do at the end of the Imguiloop
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
                     if (game.is_in_move_set(line_to_pos(i)))
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 0.7f});
                     else
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 1.f});
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.9f, 0.7f, 1.f});
                     // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
                 }
                 else
@@ -103,6 +104,14 @@ int main(int argc, char** argv)
                     else
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 1.f});
                     // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
+                }
+                
+                if(Piece* piece = game.board.at(line_to_pos(i)); piece != nullptr){
+                    if (piece->get_color() == Color::white)
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
+                    else
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.1f, 0.1f, 0.1f, 1.f});
+                    n_pop++;
                 }
 
                 ImGui::PushID(i);
@@ -120,7 +129,7 @@ int main(int argc, char** argv)
                 }
 
                 ImGui::PopID();
-                ImGui::PopStyleColor();
+                ImGui::PopStyleColor(n_pop);
 
                 if (i % 8 == 7)
                 {}

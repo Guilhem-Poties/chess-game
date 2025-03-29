@@ -38,7 +38,7 @@ std::vector<Pos> King::get_possible_moves(Board const& board, Pos pos)
 }
 const char* King::to_char()
 {
-    return this->get_color() == Color::white ? "k" : "l";
+    return "l";
 }
 std::string King::to_string()
 {
@@ -76,7 +76,7 @@ std::vector<Pos> Queen::get_possible_moves(Board const& board, Pos pos)
 }
 const char* Queen::to_char()
 {
-    return this->get_color() == Color::white ? "q" : "w";
+    return "w";
 }
 std::string Queen::to_string()
 {
@@ -110,7 +110,7 @@ std::vector<Pos> Bishop::get_possible_moves(Board const& board, Pos pos)
 }
 const char* Bishop::to_char()
 {
-    return "b";
+    return "n";
 }
 std::string Bishop::to_string()
 {
@@ -147,7 +147,7 @@ std::vector<Pos> Knight::get_possible_moves(Board const& board, Pos pos)
 }
 const char* Knight::to_char()
 {
-    return "n";
+    return "j";
 }
 std::string Knight::to_string()
 {
@@ -228,7 +228,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos)
 }
 const char* Pawn::to_char()
 {
-    return "p";
+    return "o";
 }
 std::string Pawn::to_string()
 {
