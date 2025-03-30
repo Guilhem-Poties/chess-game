@@ -30,6 +30,8 @@ private:
 
 public:
     Board(){};
+    Board(Board const& board)
+        : move_history(board.move_history), all_moves(board.all_moves) {}
     void generate_board();
     int  n_turns_played() const;
 
@@ -37,8 +39,8 @@ public:
 
     // Functions to manage pieces movements
     std::optional<Piece*>                                 move(Pos current_pos, Pos new_pos, bool en_passant);
-    void                                                  calculate_all_moves(); // Calculate all the possibles moves and stock them in the all_moves variable
-    void                                                  reset_all_moves();
+    void                                                  calculate_all_moves(bool deepsearch = true); // Calculate all the possibles moves and stock them in the all_moves variable
+    void                                                  reset_all_moves(bool deepsearch = true);
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
@@ -51,8 +53,10 @@ public:
     Pos                                           king_pos(Color king_color) const;
     int                                           n_possible_moves(Color player) const;
     std::vector<std::vector<Pos>>                 king_attackers(Pos king_pos, Color king_color);
+    bool                                          is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const;
     std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::vector<Pos>> attackers);
     bool                                          is_move_in_enemy_range(Pos move, Color color) const;
+    bool                                          is_piece_defended(Pos piece_pos, Color piece_color) const;
 
     // Board tiles status
     bool       is_in_board(Pos pos) const;
@@ -63,3 +67,5 @@ std::string get_case_written_coordonates(Pos coordonates); // Written the coordo
 
 int pos_to_line(Pos pos);
 Pos line_to_pos(int l);
+
+std::vector<std::unique_ptr<Piece>> copy_board_vector(const std::vector<std::unique_ptr<Piece>>& original);

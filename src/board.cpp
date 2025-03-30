@@ -42,7 +42,7 @@ std::optional<Piece*> Board::move(Pos current_pos, Pos new_pos, bool en_passant)
     return captured_piece;
 }
 
-void Board::calculate_all_moves()
+void Board::calculate_all_moves(bool deepsearch)
 {
     std::vector<std::pair<Pos, std::vector<Pos>>> all_adjusted_moves{};
 
@@ -50,7 +50,7 @@ void Board::calculate_all_moves()
     for (int i = 0; i < this->_board.size(); i++)
     {
         if (Piece* piece = this->at(line_to_pos(i)); piece != nullptr)
-            all_adjusted_moves.push_back(std::make_pair(line_to_pos(i), piece->get_possible_moves(*this, line_to_pos(i))));
+            all_adjusted_moves.push_back(std::make_pair(line_to_pos(i), piece->get_possible_moves(*this, line_to_pos(i), deepsearch)));
         else
             all_adjusted_moves.push_back({});
     }
@@ -58,14 +58,14 @@ void Board::calculate_all_moves()
     if (this->all_moves != all_adjusted_moves)
     {
         this->all_moves = all_adjusted_moves;
-        this->calculate_all_moves();
+        this->calculate_all_moves(deepsearch);
     }
 }
-void Board::reset_all_moves()
+void Board::reset_all_moves(bool deepsearch)
 {
     this->all_moves = {};
     this->all_moves.assign(64, {});
-    this->calculate_all_moves();
+    this->calculate_all_moves(deepsearch);
 }
 std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
 {
@@ -136,6 +136,16 @@ Pos Board::king_pos(Color king_color) const
     else
         return {-1, -1};
 }
+bool Board::is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const
+{
+    Board future_board(*this);
+    future_board._board = copy_board_vector(this->_board);
+
+    future_board.move(piece_pos, move, can_en_passant(future_board, get_en_passant_pos(piece_color, move)));
+    future_board.reset_all_moves(false);
+
+    return future_board.is_check(piece_color);
+}
 std::vector<std::vector<Pos>> Board::king_attackers(Pos king_pos, Color king_color)
 {
     // Takes all the possible moves in the game
@@ -205,14 +215,6 @@ std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::ve
 }
 bool Board::is_move_in_enemy_range(Pos move, Color color) const
 {
-    // for (int i{0}; i < this->all_moves.size(); i++)
-    // {
-    //     if (this->tile_state(line_to_pos(i), color) == Tile_State::enemy)
-    //         if (std::find(this->all_moves.at(i).second.begin(), this->all_moves.at(i).second.end(), move) != this->all_moves.at(i).second.end())
-    //             return true;
-    // }
-    // return false;
-
     // Takes all the possible moves in the game
     std::vector<Pos> all_ranges{
         {2, 1},
@@ -243,9 +245,8 @@ bool Board::is_move_in_enemy_range(Pos move, Color color) const
             if (this->tile_state(range, color) == Tile_State::enemy)
             {
                 // std::cout << "range : " << range.x << ", " << range.y << "\n";
-                if (this->is_pos_in_piece_moveset(range, move) || is_king_on_way && this->is_pos_in_piece_moveset(range, move + range_add * 2))
+                if (this->is_pos_in_piece_moveset(range, move) || !this->is_piece_defended(range, (Color)((int)color + 1)) || (is_king_on_way && this->is_pos_in_piece_moveset(range, move + range_add * 2)))
                     return true;
-
                 else
                     break;
             }
@@ -258,7 +259,48 @@ bool Board::is_move_in_enemy_range(Pos move, Color color) const
 
     return false;
 }
+bool Board::is_piece_defended(Pos piece_pos, Color piece_color) const
+{
+    // Takes all the possible moves in the game
+    std::vector<Pos> all_ranges{
+        {2, 1},
+        {2, -1},
+        {1, 2},
+        {-1, 2},
+        {-2, 1},
+        {-2, -1},
+        {1, -2},
+        {-1, -2},
+        {1, 1},
+        {0, 1},
+        {-1, 1},
+        {-1, 0},
+        {-1, -1},
+        {0, -1},
+        {1, -1},
+        {1, 0}
+    };
 
+    for (Pos range_add : all_ranges)
+    {
+        Pos range = piece_pos + range_add;
+        while (this->is_in_board(range) || this->tile_state(range, piece_color) == Tile_State::enemy)
+        {
+            // Check if there is a black piece and if the king is actually in the piece move range
+            if (this->tile_state(range, piece_color) == Tile_State::ally)
+            {
+                if (this->is_pos_in_piece_moveset(range, piece_pos + range_add))
+                    return true;
+                else
+                    break;
+            }
+
+            range = range + range_add;
+        }
+    }
+
+    return false;
+}
 /****** Tile status managment ******/
 
 bool Board::is_in_board(Pos pos) const
@@ -283,4 +325,16 @@ int pos_to_line(Pos pos)
 Pos line_to_pos(int l)
 {
     return {l % 8, l / 8};
+}
+std::vector<std::unique_ptr<Piece>> copy_board_vector(const std::vector<std::unique_ptr<Piece>>& original)
+{
+    std::vector<std::unique_ptr<Piece>> copy;
+    for (const auto& elem : original)
+    {
+        if (elem != nullptr)
+            copy.push_back(elem->clone()); // Crée un nouvel objet
+        else
+            copy.push_back(nullptr);
+    }
+    return copy;
 }
