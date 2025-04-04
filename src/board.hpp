@@ -45,17 +45,14 @@ public:
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 
     // Functions to deal wu=ith checks
-    bool                                          is_check(Color player);
-    bool                                          is_checkmate(Color player);
-    bool                                          is_stale_mate(Color player);
-    bool                                          is_king(Color piece_color, Pos piece_pos) const;
-    Pos                                           king_pos(Color king_color) const;
-    int                                           n_possible_moves(Color player) const;
-    std::vector<std::vector<Pos>>                 king_attackers(Pos king_pos, Color king_color);
-    bool                                          is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const;
-    std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::vector<Pos>> attackers);
-    bool                                          is_move_in_enemy_range(Pos move, Color color) const;
-    bool                                          is_piece_defended(Pos piece_pos, Color piece_color) const;
+    bool is_check(Color player);
+    bool is_checkmate(Color player);
+    bool is_stale_mate(Color player);
+    bool is_king(Color piece_color, Pos piece_pos) const;
+    Pos  king_pos(Color king_color) const;
+    int  n_possible_moves(Color player) const;
+    bool is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const;
+    bool is_tile_attacked(Pos move, Color color) const;
 
     // Board tiles status
     bool       is_in_board(Pos pos) const;

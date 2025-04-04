@@ -76,9 +76,7 @@ bool Board::is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const
 
 bool Board::is_check(Color player)
 {
-    Pos king_pos = this->king_pos(player);
-
-    if (auto king_attackers{this->king_attackers(king_pos, player)}; king_attackers.size() > 0)
+    if (is_tile_attacked(this->king_pos(player), player))
     {
         return true;
     }
@@ -135,161 +133,17 @@ bool Board::is_move_future_check(Pos piece_pos, Pos move, Color piece_color) con
 
     return future_board.is_check(piece_color);
 }
-std::vector<std::vector<Pos>> Board::king_attackers(Pos king_pos, Color king_color)
+bool Board::is_tile_attacked(Pos move, Color color) const
 {
-    // Takes all the possible moves in the game
-    std::vector<Pos> all_moves{
-        {2, 1},
-        {2, -1},
-        {1, 2},
-        {-1, 2},
-        {-2, 1},
-        {-2, -1},
-        {1, -2},
-        {-1, -2},
-        {1, 1},
-        {0, 1},
-        {-1, 1},
-        {-1, 0},
-        {-1, -1},
-        {0, -1},
-        {1, -1},
-        {1, 0}
-    };
-
-    std::vector<std::vector<Pos>> attaking_pieces{};
-
-    for (Pos move_add : all_moves)
+    for (std::pair<Pos, std::vector<Pos>> piece_moves : this->all_moves)
     {
-        std::vector<Pos> move_stack = {};    // Stack all the moves between a piece and the attacker and the king
-        bool             pined_piece{false}; // Pin a piece if she's the only one in the way
-        Pos              pined_piece_pos{};
-        bool             first_ally_encountered{true}; // Checks if an ally piece is the first one encountered in order to pin it if it is
-
-        Pos move = king_pos + move_add;
-        while (this->is_in_board(move))
-        {
-            // If a piece is in the way and it's the first one, it gets pined
-            if (first_ally_encountered && this->tile_state(move, king_color) == Tile_State::ally)
-            {
-                pined_piece            = true;
-                pined_piece_pos        = move;
-                first_ally_encountered = false;
-            }
-            // If there is a second piece in the way, it unpins the first one
-            else if (this->tile_state(move, king_color) == Tile_State::ally)
-                pined_piece = false;
-            // Check if there is a black piece and if the king is actually in the piece move range
-            else if (this->tile_state(move, king_color) == Tile_State::enemy && this->is_pos_in_piece_moveset(move, king_pos))
-            {
-                // If an ally piece is in the way, it gets pined
-                if (pined_piece)
-                    this->at(pined_piece_pos)->pin_piece();
-                else
-                    attaking_pieces.push_back(move_stack);
-
-                break;
-            }
-
-            move_stack.push_back(move);
-            move_stack.erase(move_stack.begin());
-            move = move + move_add;
-        }
+        if (this->tile_state(piece_moves.first, color) == Tile_State::enemy)
+            if (std::find(piece_moves.second.begin(), piece_moves.second.end(), move) != piece_moves.second.end())
+                return true;
     }
-
-    return attaking_pieces;
-}
-std::vector<std::pair<Pos, std::vector<Pos>>> find_defenders(std::vector<std::vector<Pos>> attackers)
-{
-}
-bool Board::is_move_in_enemy_range(Pos move, Color color) const
-{
-    // Takes all the possible moves in the game
-    std::vector<Pos> all_ranges{
-        {2, 1},
-        {2, -1},
-        {1, 2},
-        {-1, 2},
-        {-2, 1},
-        {-2, -1},
-        {1, -2},
-        {-1, -2},
-        {1, 1},
-        {0, 1},
-        {-1, 1},
-        {-1, 0},
-        {-1, -1},
-        {0, -1},
-        {1, -1},
-        {1, 0}
-    };
-
-    for (Pos range_add : all_ranges)
-    {
-        Pos  range = move + range_add;
-        bool is_king_on_way{false}; // Checks if the king is on the way then the program will be aware if it cuts the range
-        while (this->is_in_board(range) || (this->tile_state(range, color) == Tile_State::ally && !this->is_king(color, range)))
-        {
-            // Check if there is a black piece and if the king is actually in the piece move range
-            if (this->tile_state(range, color) == Tile_State::enemy)
-            {
-                // std::cout << "range : " << range.x << ", " << range.y << "\n";
-                if (this->is_pos_in_piece_moveset(range, move) || !this->is_piece_defended(range, (Color)((int)color + 1)) || (is_king_on_way && this->is_pos_in_piece_moveset(range, move + range_add * 2)))
-                    return true;
-                else
-                    break;
-            }
-            if (this->is_king(color, range))
-                is_king_on_way = true;
-
-            range = range + range_add;
-        }
-    }
-
     return false;
 }
-bool Board::is_piece_defended(Pos piece_pos, Color piece_color) const
-{
-    // Takes all the possible moves in the game
-    std::vector<Pos> all_ranges{
-        {2, 1},
-        {2, -1},
-        {1, 2},
-        {-1, 2},
-        {-2, 1},
-        {-2, -1},
-        {1, -2},
-        {-1, -2},
-        {1, 1},
-        {0, 1},
-        {-1, 1},
-        {-1, 0},
-        {-1, -1},
-        {0, -1},
-        {1, -1},
-        {1, 0}
-    };
 
-    for (Pos range_add : all_ranges)
-    {
-        Pos range = piece_pos + range_add;
-        while (this->is_in_board(range) || this->tile_state(range, piece_color) == Tile_State::enemy)
-        {
-            // Check if there is a black piece and if the king is actually in the piece move range
-            if (this->tile_state(range, piece_color) == Tile_State::ally)
-            {
-                if (this->is_pos_in_piece_moveset(range, piece_pos + range_add))
-                    return true;
-                else
-                    break;
-            }
-
-            range = range + range_add;
-        }
-    }
-
-    return false;
-}
 /****** Tile status managment ******/
 
 bool Board::is_in_board(Pos pos) const
