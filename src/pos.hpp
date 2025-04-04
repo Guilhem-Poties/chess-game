@@ -1,3 +1,5 @@
+#include <iostream>
+
 // Structure for Positions with increase options
 struct Pos {
     int x;
@@ -5,6 +7,8 @@ struct Pos {
 
     Pos incr_x(int incr) { return {this->x + incr, this->y}; };
     Pos incr_y(int incr) { return {this->x, this->y + incr}; };
+
+    std::string to_string() { return std::to_string(x) + ", " + std::to_string(y) + "\n"; };
 };
 
 inline Pos operator+(Pos const& pos_a, Pos const& pos_b)
