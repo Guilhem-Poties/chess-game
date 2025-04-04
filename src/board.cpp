@@ -44,29 +44,18 @@ Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant)
 
 void Board::calculate_all_moves(bool deepsearch)
 {
-    std::vector<std::pair<Pos, std::vector<Pos>>> all_adjusted_moves{};
+    this->all_moves = {};
 
     // this->all_moves = {};
     for (int i = 0; i < this->_board.size(); i++)
     {
         if (Piece* piece = this->at(line_to_pos(i)); piece != nullptr)
-            all_adjusted_moves.push_back(std::make_pair(line_to_pos(i), piece->get_possible_moves(*this, line_to_pos(i), deepsearch)));
+            all_moves.push_back(std::make_pair(line_to_pos(i), piece->get_possible_moves(*this, line_to_pos(i), deepsearch)));
         else
-            all_adjusted_moves.push_back({});
+            all_moves.push_back({});
     }
+}
 
-    if (this->all_moves != all_adjusted_moves)
-    {
-        this->all_moves = all_adjusted_moves;
-        this->calculate_all_moves(deepsearch);
-    }
-}
-void Board::reset_all_moves(bool deepsearch)
-{
-    this->all_moves = {};
-    this->all_moves.assign(64, {});
-    this->calculate_all_moves(deepsearch);
-}
 std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
 {
     if (this->move_history.size() != 0)
@@ -142,7 +131,7 @@ bool Board::is_move_future_check(Pos piece_pos, Pos move, Color piece_color) con
     future_board._board = copy_board_vector(this->_board);
 
     future_board.move(piece_pos, move, can_en_passant(future_board, get_en_passant_pos(piece_color, move)));
-    future_board.reset_all_moves(false);
+    future_board.calculate_all_moves(false);
 
     return future_board.is_check(piece_color);
 }

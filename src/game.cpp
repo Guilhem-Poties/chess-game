@@ -28,7 +28,7 @@ void Game::update(Pos pos)
 
         this->switch_player();
 
-        this->board.reset_all_moves();
+        this->board.calculate_all_moves();
 
         if (this->board.is_check(this->current_player))
             std::cout << "Echec ! \n";
