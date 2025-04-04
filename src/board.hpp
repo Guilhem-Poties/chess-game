@@ -44,19 +44,19 @@ public:
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 
-    // Functions to deal wu=ith checks
+    // Functions to deal with checks
     bool is_check(Color player);
     bool is_checkmate(Color player);
     bool is_stale_mate(Color player);
     bool is_king(Color piece_color, Pos piece_pos) const;
     Pos  king_pos(Color king_color) const;
     int  n_possible_moves(Color player) const;
-    bool is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const;
+    bool is_move_future_check(Pos piece_pos, Pos move) const;
     bool is_tile_attacked(Pos move, Color color) const;
 
     // Board tiles status
     bool       is_in_board(Pos pos) const;
-    Tile_State tile_state(Pos, Color color) const;
+    Tile_State tile_state(Pos pos, Color color) const; // Get the tile state depending of a given color
 };
 
 std::string get_case_written_coordonates(Pos coordonates); // Written the coordonates in chess language (ex : C4)

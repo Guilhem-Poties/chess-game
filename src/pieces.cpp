@@ -30,7 +30,7 @@ std::vector<Pos> King::get_possible_moves(Board const& board, Pos pos, bool deep
     {
         Pos move = pos + pos_add;
 
-        if (board.is_in_board(move) && board.tile_state(move, this->get_color()) != Tile_State::ally && (!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+        if (board.is_in_board(move) && board.tile_state(move, this->get_color()) != Tile_State::ally && (!deepsearch || !board.is_move_future_check(pos, move)))
             current_possible_moves.emplace_back(move);
     }
 
@@ -66,7 +66,7 @@ std::vector<Pos> Queen::get_possible_moves(Board const& board, Pos pos, bool dee
         Pos move = pos + pos_add;
         while (board.is_in_board(move) && board.tile_state(move, get_color()) != Tile_State::ally)
         {
-            if (!deepsearch || !board.is_move_future_check(pos, move, this->get_color()))
+            if (!deepsearch || !board.is_move_future_check(pos, move))
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
@@ -101,7 +101,7 @@ std::vector<Pos> Bishop::get_possible_moves(Board const& board, Pos pos, bool de
         Pos move = pos + pos_add;
         while (board.is_in_board(move) && board.tile_state(move, get_color()) != Tile_State::ally)
         {
-            if ((!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+            if ((!deepsearch || !board.is_move_future_check(pos, move)))
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
@@ -141,7 +141,7 @@ std::vector<Pos> Knight::get_possible_moves(Board const& board, Pos pos, bool de
 
         if (board.is_in_board(move))
         {
-            if (board.tile_state(move, get_color()) != Tile_State::ally && (!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+            if (board.tile_state(move, get_color()) != Tile_State::ally && (!deepsearch || !board.is_move_future_check(pos, move)))
                 current_possible_moves.emplace_back(move);
         }
     }
@@ -173,7 +173,7 @@ std::vector<Pos> Tower::get_possible_moves(Board const& board, Pos pos, bool dee
         Pos move = pos + pos_add;
         while (board.is_in_board(move) && board.tile_state(move, get_color()) != Tile_State::ally)
         {
-            if ((!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+            if ((!deepsearch || !board.is_move_future_check(pos, move)))
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
@@ -209,7 +209,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
     {
         Pos move = this->get_color() == Color::white ? pos + pos_add : pos - pos_add;
 
-        if (board.is_in_board(move) && board.tile_state(move, get_color()) == Tile_State::empty && (!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+        if (board.is_in_board(move) && board.tile_state(move, get_color()) == Tile_State::empty && (!deepsearch || !board.is_move_future_check(pos, move)))
         {
             current_possible_moves.emplace_back(move);
         }
@@ -222,7 +222,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
         // Calulate wether the an passant should be depending of the pawn color/direction
         Pos en_passant_pos{get_en_passant_pos(this->get_color(), move)};
 
-        if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)) && (!deepsearch || !board.is_move_future_check(pos, move, this->get_color())))
+        if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)) && (!deepsearch || !board.is_move_future_check(pos, move)))
         {
             current_possible_moves.emplace_back(move);
         }

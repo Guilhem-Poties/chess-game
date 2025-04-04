@@ -123,15 +123,15 @@ Pos Board::king_pos(Color king_color) const
     else
         return {-1, -1};
 }
-bool Board::is_move_future_check(Pos piece_pos, Pos move, Color piece_color) const
+bool Board::is_move_future_check(Pos piece_pos, Pos move) const
 {
     Board future_board(*this);
     future_board._board = copy_board_vector(this->_board);
 
-    future_board.move(piece_pos, move, can_en_passant(future_board, get_en_passant_pos(piece_color, move)));
+    future_board.move(piece_pos, move, can_en_passant(future_board, get_en_passant_pos(this->at(piece_pos)->get_color(), move)));
     future_board.calculate_all_moves(false);
 
-    return future_board.is_check(piece_color);
+    return future_board.is_check(this->at(piece_pos)->get_color());
 }
 bool Board::is_tile_attacked(Pos move, Color color) const
 {
