@@ -86,8 +86,9 @@ int main(int argc, char** argv)
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
-            for (size_t i = 0; i < 64; i++)
+            for (int i = 63; i >=0; i--)
             {
+                std::cout << i << "\n";
                 int n_pop {1}; // Count the number of pop to do at the end of the Imguiloop
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
@@ -131,9 +132,7 @@ int main(int argc, char** argv)
                 ImGui::PopID();
                 ImGui::PopStyleColor(n_pop);
 
-                if (i % 8 == 7)
-                {}
-                else
+                if (i % 8 != 0)
                     ImGui::SameLine();
             }
 

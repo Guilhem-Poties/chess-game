@@ -112,5 +112,4 @@ bool can_short_castle(Board const& board, Pos possible_pos, Color king_color);
 bool can_long_castle(Board const& board, Pos possible_pos, Color king_color);
 
 bool can_en_passant(Board const& board, Pos pos); // Chack if a piece can do en passant
-
-Pos get_en_passant_pos(Color pawn_color, Pos pawn_pos);
+Pos  get_en_passant_pos(Color pawn_color, Pos pawn_pos);

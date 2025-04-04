@@ -145,10 +145,8 @@ std::vector<Pos> Knight::get_possible_moves(Board const& board, Pos pos, bool de
         Pos move = pos + pos_add;
 
         if (board.is_in_board(move))
-        {
             if (board.tile_state(move, get_color()) != Tile_State::ally && (!deepsearch || !board.is_move_future_check(pos, move)))
                 current_possible_moves.emplace_back(move);
-        }
     }
     return current_possible_moves;
 }
@@ -207,7 +205,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
     std::vector<Pos> current_possible_moves{};
 
     // If the pawn hasn't moved yet, he wan move on a additionnal square
-    if (!this->has_moved() && (board.tile_state(get_en_passant_pos(this->get_color(), pos), this->get_color()) != Tile_State::empty))
+    if (!this->has_moved() && (board.tile_state(Color::white == this->get_color() ? pos.incr_y(1) : pos.incr_y(-1), this->get_color()) == Tile_State::empty))
         all_moves.push_back({0, 2});
 
     for (Pos pos_add : all_moves)
@@ -215,9 +213,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
         Pos move = this->get_color() == Color::white ? pos + pos_add : pos - pos_add;
 
         if (board.is_in_board(move) && board.tile_state(move, get_color()) == Tile_State::empty && (!deepsearch || !board.is_move_future_check(pos, move)))
-        {
             current_possible_moves.emplace_back(move);
-        }
     }
 
     for (Pos pos_add : all_attacks)
@@ -228,9 +224,7 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
         Pos en_passant_pos{get_en_passant_pos(this->get_color(), move)};
 
         if (board.is_in_board(move) && (board.tile_state(move, this->get_color()) == Tile_State::enemy || can_en_passant(board, en_passant_pos)) && (!deepsearch || !board.is_move_future_check(pos, move)))
-        {
             current_possible_moves.emplace_back(move);
-        }
     }
     return current_possible_moves;
 }
@@ -245,8 +239,10 @@ std::string Pawn::to_string()
 
 std::unique_ptr<Piece> place_piece(int pos)
 {
-    if (int y = line_to_pos(pos).y; y == 0)
+    switch (line_to_pos(pos).y)
     {
+    case 0:
+
         switch (pieces_alignement[line_to_pos(pos).x])
         {
         case 3:
@@ -262,9 +258,8 @@ std::unique_ptr<Piece> place_piece(int pos)
         default:
             return nullptr;
         }
-    }
-    else if (y == 7)
-    {
+
+    case 7:
         switch (pieces_alignement[line_to_pos(pos).x])
         {
         case 3:
@@ -280,11 +275,14 @@ std::unique_ptr<Piece> place_piece(int pos)
         default:
             return nullptr;
         }
-    }
-    else if (y == 1)
+
+    case 1:
         return std::make_unique<Pawn>(Color::white);
-    else if (y == 6)
+    case 6:
         return std::make_unique<Pawn>(Color::black);
+    default:
+        return nullptr;
+    }
 
     // if (pos == 3)
     //     return std::make_unique<King>(Color::white);
@@ -298,9 +296,6 @@ std::unique_ptr<Piece> place_piece(int pos)
     //     return std::make_unique<Tower>(Color::black);
     // else if (pos == 63)
     //     return std::make_unique<King>(Color::black);
-
-    else
-        return nullptr;
 }
 
 bool can_short_castle(Board const& board, Pos possible_pos, Color king_color)

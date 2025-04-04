@@ -22,7 +22,6 @@ Piece* Board::at(Pos pos) const
     else
         return nullptr;
 }
-
 Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant, bool short_castle, bool long_castle)
 {
     if (current_pos != new_pos)
@@ -33,8 +32,7 @@ Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant, bool short_cas
 
         if (en_passant)
         {
-            captured_piece = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
-
+            captured_piece                                                                             = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
             this->_board[pos_to_line(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos))] = nullptr;
         }
         else if (short_castle)
@@ -149,11 +147,10 @@ bool Board::is_move_future_check(Pos piece_pos, Pos move) const
 bool Board::is_tile_attacked(Pos move, Color color) const
 {
     for (std::pair<Pos, std::vector<Pos>> piece_moves : this->all_moves)
-    {
         if (this->tile_state(piece_moves.first, color) == Tile_State::enemy)
             if (std::find(piece_moves.second.begin(), piece_moves.second.end(), move) != piece_moves.second.end())
                 return true;
-    }
+
     return false;
 }
 
