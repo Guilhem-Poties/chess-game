@@ -38,7 +38,7 @@ public:
     Piece* at(Pos) const;
 
     // Functions to manage pieces movements
-    std::optional<Piece*>                                 move(Pos current_pos, Pos new_pos, bool en_passant);
+    Piece*                                                move(Pos current_pos, Pos new_pos, bool en_passant);
     void                                                  calculate_all_moves(bool deepsearch = true); // Calculate all the possibles moves and stock them in the all_moves variable
     void                                                  reset_all_moves(bool deepsearch = true);
     std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history

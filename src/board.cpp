@@ -23,7 +23,7 @@ Piece* Board::at(Pos pos) const
         return nullptr;
 }
 
-std::optional<Piece*> Board::move(Pos current_pos, Pos new_pos, bool en_passant)
+Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant)
 {
     this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
 

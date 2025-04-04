@@ -50,14 +50,14 @@ void Game::switch_player()
     else
         this->current_player = Color::white;
 };
-void Game::capture_piece(std::optional<Piece*> piece)
+void Game::capture_piece(Piece* piece)
 {
     if (piece == nullptr)
     {
         if (this->current_player == Color::white)
-            this->captured_pieces.first.push_back(piece.value());
+            this->captured_pieces.first.push_back(piece);
         else
-            this->captured_pieces.second.push_back(piece.value());
+            this->captured_pieces.second.push_back(piece);
     }
 };
 void Game::select_piece(Pos pos)

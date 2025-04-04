@@ -24,7 +24,7 @@ public:
     void end();
 
     void switch_player();
-    void capture_piece(std::optional<Piece*> piece);
+    void capture_piece(Piece* piece);
     void select_piece(Pos pos);
 
     bool is_in_move_set(Pos pos);
