@@ -34,6 +34,11 @@ std::vector<Pos> King::get_possible_moves(Board const& board, Pos pos, bool deep
             current_possible_moves.emplace_back(move);
     }
 
+    if (deepsearch && can_short_castle(board, pos.incr_x(-2), this->get_color()))
+        current_possible_moves.push_back(pos.incr_x(-2));
+    if (deepsearch && can_long_castle(board, pos.incr_x(2), this->get_color()))
+        current_possible_moves.push_back(pos.incr_x(2));
+
     return current_possible_moves;
 }
 const char* King::to_char()
@@ -240,60 +245,106 @@ std::string Pawn::to_string()
 
 std::unique_ptr<Piece> place_piece(int pos)
 {
-    // if (int y = line_to_pos(pos).y; y == 0)
-    // {
-    //     switch (pieces_alignement[line_to_pos(pos).x])
-    //     {
-    //     case 3:
-    //         return std::make_unique<Tower>(Color::white);
-    //     case 1:
-    //         return std::make_unique<Knight>(Color::white);
-    //     case 2:
-    //         return std::make_unique<Bishop>(Color::white);
-    //     case 0:
-    //         return std::make_unique<King>(Color::white);
-    //     case 4:
-    //         return std::make_unique<Queen>(Color::white);
-    //     default:
-    //         return nullptr;
-    //     }
-    // }
-    // else if (y == 7)
-    // {
-    //     switch (pieces_alignement[line_to_pos(pos).x])
-    //     {
-    //     case 3:
-    //         return std::make_unique<Tower>(Color::black);
-    //     case 1:
-    //         return std::make_unique<Knight>(Color::black);
-    //     case 2:
-    //         return std::make_unique<Bishop>(Color::black);
-    //     case 0:
-    //         return std::make_unique<King>(Color::black);
-    //     case 4:
-    //         return std::make_unique<Queen>(Color::black);
-    //     default:
-    //         return nullptr;
-    //     }
-    // }
-    // else if (y == 1)
-    //     return std::make_unique<Pawn>(Color::white);
-    // else if (y == 6)
-    //     return std::make_unique<Pawn>(Color::black);
+    if (int y = line_to_pos(pos).y; y == 0)
+    {
+        switch (pieces_alignement[line_to_pos(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::white);
+        case 1:
+            return std::make_unique<Knight>(Color::white);
+        case 2:
+            return std::make_unique<Bishop>(Color::white);
+        case 0:
+            return std::make_unique<King>(Color::white);
+        case 4:
+            return std::make_unique<Queen>(Color::white);
+        default:
+            return nullptr;
+        }
+    }
+    else if (y == 7)
+    {
+        switch (pieces_alignement[line_to_pos(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::black);
+        case 1:
+            return std::make_unique<Knight>(Color::black);
+        case 2:
+            return std::make_unique<Bishop>(Color::black);
+        case 0:
+            return std::make_unique<King>(Color::black);
+        case 4:
+            return std::make_unique<Queen>(Color::black);
+        default:
+            return nullptr;
+        }
+    }
+    else if (y == 1)
+        return std::make_unique<Pawn>(Color::white);
+    else if (y == 6)
+        return std::make_unique<Pawn>(Color::black);
 
-    if (pos == 3)
-        return std::make_unique<King>(Color::white);
-    else if (pos == 0)
-        return std::make_unique<Tower>(Color::white);
-    else if (pos == 56)
-        return std::make_unique<Tower>(Color::black);
-    // else if (pos == 14)
+    // if (pos == 3)
+    //     return std::make_unique<King>(Color::white);
+    // else if (pos == 0)
+    //     return std::make_unique<Tower>(Color::white);
+    // else if (pos == 7)
+    //     return std::make_unique<Tower>(Color::white);
+    // else if (pos == 6)
+    //     return std::make_unique<Tower>(Color::white);
+    // else if (pos == 58)
     //     return std::make_unique<Tower>(Color::black);
-    else if (pos == 63)
-        return std::make_unique<King>(Color::black);
+    // else if (pos == 63)
+    //     return std::make_unique<King>(Color::black);
 
     else
         return nullptr;
+}
+
+bool can_short_castle(Board const& board, Pos possible_pos, Color king_color)
+{
+    auto king_pos{possible_pos.incr_x(2)};
+    auto tower_pos{possible_pos.incr_x(-1)};
+    auto king{board.at(king_pos)};
+    auto tower{board.at(tower_pos)};
+
+    if (board.is_king(king_color, king_pos) && board.is_tower(king_color, tower_pos) && !king->has_moved() && !tower->has_moved())
+    {
+        std::vector<Pos> range{king_pos.incr_x(-1), possible_pos};
+        if (std::find_if(range.begin(), range.end(), [&board, king_color](Pos pos) { return board.tile_state(pos, king_color) != Tile_State::empty; }) == range.end())
+        {
+            range.push_back(king_pos);
+            return std::find_if(range.begin(), range.end(), [&board, king_pos](Pos pos) { return board.is_move_future_check(king_pos, pos); }) == range.end();
+        }
+        else
+            return false;
+    }
+    else
+        return false;
+}
+bool can_long_castle(Board const& board, Pos possible_pos, Color king_color)
+{
+    auto king_pos{possible_pos.incr_x(-2)};
+    auto tower_pos{possible_pos.incr_x(2)};
+    auto king{board.at(king_pos)};
+    auto tower{board.at(tower_pos)};
+
+    if (board.is_king(king_color, king_pos) && board.is_tower(king_color, tower_pos) && !king->has_moved() && !tower->has_moved())
+    {
+        std::vector<Pos> range{king_pos.incr_x(1), possible_pos, possible_pos.incr_x(1)};
+        if (std::find_if(range.begin(), range.end(), [&board, king_color](Pos pos) { return board.tile_state(pos, king_color) != Tile_State::empty; }) == range.end())
+        {
+            range.pop_back();
+            range.push_back(king_pos);
+            return std::find_if(range.begin(), range.end(), [&board, king_pos](Pos pos) { return board.is_move_future_check(king_pos, pos); }) == range.end();
+        }
+        else
+            return false;
+    }
+    else
+        return false;
 }
 
 // Take the board and the pos where there would might be a pawn to take en passant

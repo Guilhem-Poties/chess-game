@@ -38,9 +38,10 @@ public:
     Piece* at(Pos) const;
 
     // Functions to manage pieces movements
-    Piece*                                                move(Pos current_pos, Pos new_pos, bool en_passant);
+    Piece*                                                move(Pos current_pos, Pos new_pos, bool en_passant, bool short_castle, bool long_castle);
     void                                                  calculate_all_moves(bool deepsearch = true); // Calculate all the possibles moves and stock them in the all_moves variable
-    std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const;                       // Get the last move from the move history
+    bool                                                  is_tower(Color piece_color, Pos piece_pos) const;
+    std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 

@@ -17,8 +17,10 @@ void Game::update(Pos pos)
     {
         // If there an en passant take is possible from this move, it means that the player has selected it
         bool en_passant{can_en_passant(this->board, get_en_passant_pos(this->board.at(this->selected_piece_pos)->get_color(), pos))};
+        bool short_castle{can_short_castle(this->board, pos, this->board.at(this->selected_piece_pos)->get_color())};
+        bool long_castle{can_long_castle(this->board, pos, this->board.at(this->selected_piece_pos)->get_color())};
 
-        capture_piece(this->board.move(this->selected_piece_pos, pos, en_passant));
+        capture_piece(this->board.move(this->selected_piece_pos, pos, en_passant, short_castle, long_castle));
 
         // Reset the variables and mention that the piece has been moved
         this->board.at(pos)->moved_piece();

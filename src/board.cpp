@@ -23,25 +23,33 @@ Piece* Board::at(Pos pos) const
         return nullptr;
 }
 
-Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant)
+Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant, bool short_castle, bool long_castle)
 {
-    this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
-
-    Piece* captured_piece{this->at(new_pos)};
-
-    if (en_passant)
+    if (current_pos != new_pos)
     {
-        captured_piece = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
+        this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
 
-        this->_board[pos_to_line(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos))] = nullptr;
+        Piece* captured_piece{this->at(new_pos)};
+
+        if (en_passant)
+        {
+            captured_piece = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
+
+            this->_board[pos_to_line(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos))] = nullptr;
+        }
+        else if (short_castle)
+            this->move(new_pos.incr_x(-1), new_pos.incr_x(1), false, false, false);
+        else if (long_castle)
+            this->move(new_pos.incr_x(2), new_pos.incr_x(-1), false, false, false);
+
+        this->_board[pos_to_line(new_pos)]     = std::move(this->_board.at(pos_to_line(current_pos)));
+        this->_board[pos_to_line(current_pos)] = nullptr;
+
+        return captured_piece;
     }
-
-    this->_board[pos_to_line(new_pos)]     = std::move(this->_board.at(pos_to_line(current_pos)));
-    this->_board[pos_to_line(current_pos)] = nullptr;
-
-    return captured_piece;
+    else
+        return nullptr;
 }
-
 void Board::calculate_all_moves(bool deepsearch)
 {
     this->all_moves = {};
@@ -55,7 +63,10 @@ void Board::calculate_all_moves(bool deepsearch)
             all_moves.push_back({});
     }
 }
-
+bool Board::is_tower(Color piece_color, Pos piece_pos) const
+{
+    return this->tile_state(piece_pos, piece_color) == Tile_State::ally && dynamic_cast<Tower*>(this->at(piece_pos));
+}
 std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
 {
     if (this->move_history.size() != 0)
@@ -128,7 +139,9 @@ bool Board::is_move_future_check(Pos piece_pos, Pos move) const
     Board future_board(*this);
     future_board._board = copy_board_vector(this->_board);
 
-    future_board.move(piece_pos, move, can_en_passant(future_board, get_en_passant_pos(this->at(piece_pos)->get_color(), move)));
+    bool en_passant{can_en_passant(future_board, get_en_passant_pos(future_board.at(piece_pos)->get_color(), move))};
+
+    future_board.move(piece_pos, move, en_passant, false, false);
     future_board.calculate_all_moves(false);
 
     return future_board.is_check(this->at(piece_pos)->get_color());
