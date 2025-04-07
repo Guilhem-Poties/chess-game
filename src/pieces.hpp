@@ -22,6 +22,7 @@ class Piece {
 public:
     virtual std::vector<Pos>       get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) = 0;
     virtual std::unique_ptr<Piece> clone() const                                                           = 0;
+    virtual bool                   equal(const Piece& other) const                                         = 0;
 
     Color get_color() const { return color; }
     bool  has_moved() const { return this->moved; }
@@ -48,6 +49,7 @@ private:
 class King : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<King>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -58,6 +60,7 @@ class King : public Piece {
 class Queen : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<Queen>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -68,6 +71,7 @@ class Queen : public Piece {
 class Bishop : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<Bishop>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -78,6 +82,7 @@ class Bishop : public Piece {
 class Knight : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<Knight>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -88,6 +93,7 @@ class Knight : public Piece {
 class Tower : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<Tower>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -98,6 +104,7 @@ class Tower : public Piece {
 class Pawn : public Piece {
     std::vector<Pos>               get_possible_moves(Board const& board, Pos pos, bool deepsearch = true) override;
     virtual std::unique_ptr<Piece> clone() const { return std::make_unique<Pawn>(*this); }
+    virtual bool                   equal(const Piece& other) const override;
 
     using Piece::Piece;
 
@@ -113,3 +120,12 @@ bool can_long_castle(Board const& board, Pos possible_pos, Color king_color);
 
 bool can_en_passant(Board const& board, Pos pos); // Chack if a piece can do en passant
 Pos  get_en_passant_pos(Color pawn_color, Pos pawn_pos);
+
+inline operator==(Piece const& piece_a, Piece const& piece_b)
+{
+    return piece_a.equal(piece_b);
+};
+inline operator!=(Piece const& piece_a, Piece const& piece_b)
+{
+    return !(piece_a == piece_b);
+};

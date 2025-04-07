@@ -88,7 +88,6 @@ int main(int argc, char** argv)
 
             for (int i = 63; i >=0; i--)
             {
-                std::cout << i << "\n";
                 int n_pop {1}; // Count the number of pop to do at the end of the Imguiloop
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
                 {
@@ -118,16 +117,8 @@ int main(int argc, char** argv)
                 ImGui::PushID(i);
 
                 if (ImGui::Button(game.board.at(line_to_pos(i)) == nullptr ? "" : game.board.at(line_to_pos(i))->to_char(), ImVec2{50.f, 50.f}))
-
-                {
-                    std::cout << "Clicked button " + get_case_written_coordonates(line_to_pos(i)) + "\n";
-                    if (game.board.at(line_to_pos(i)) == nullptr)
-                        std::cout << "Vide \n";
-                    else
-                        std::cout << game.board.at(line_to_pos(i))->to_string() + "\n";
-
                     game.update(line_to_pos(i));
-                }
+                
 
                 ImGui::PopID();
                 ImGui::PopStyleColor(n_pop);
@@ -135,56 +126,10 @@ int main(int argc, char** argv)
                 if (i % 8 != 0)
                     ImGui::SameLine();
             }
-
-            // for (int i = 7; i >= 0; i--)
-            // {
-            //     for (int j = 0; j <= 7; j++)
-            //     {
-            //         if ((i + j) % 2 == 0)
-            //         {
-            //             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 1.f, 1.f, 1.f});
-            //             // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
-            //         }
-            //         else
-            //         {
-            //             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.f, 0.f, 0.f, 1.f});
-            //             // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
-            //         }
-
-            //         ImGui::PushID(i * 10 + j);
-            //         if (ImGui::Button("x", ImVec2{50.f, 50.f}))
-            //             std::cout << "Clicked button " + get_case_written_posonates({i, j}) + "\n";
-
-            //         ImGui::PopID();
-            //         ImGui::PopStyleColor();
-
-            //         ImGui::SameLine();
-            //     }
-            //     ImGui::NewLine();
-            // }
-
             ImGui::PopStyleVar();
 
-            // if (ImGui::Button("1", ImVec2{50.f, 50.f}))
-            //     std::cout << "Clicked button 1\n";
-            // ImGui::SameLine(); // Draw the next ImGui widget on the same line as the previous one. Otherwise it would be below it
-
-            // ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{1.f, 0.f, 0.f, 1.f}); // Changes the color of all buttons until we call ImGui::PopStyleColor(). There is also ImGuiCol_ButtonActive and ImGuiCol_ButtonHovered
-            // ImGui::PushID(2);                                                   // When some ImGui items have the same label (for exemple the next two buttons are labeled "Yo") ImGui needs you to specify an ID so that it can distinguish them. It can be an int, a pointer, a string, etc.
-            //                                                                     // You will definitely run into this when you create a button for each of your chess pieces, so remember to give them an ID!
-            // if (ImGui::Button("Yo", ImVec2{50.f, 50.f}))
-            //     std::cout << "Clicked button 2\n";
-            // ImGui::PopID(); // Then pop the id you pushed after you created the widget
-
-            // // ImGui::SameLine();
-            // ImGui::PushID(3);
-            // if (ImGui::Button("Yo", ImVec2{50.f, 50.f}))
-            //     std::cout << "Clicked button 3\n";
-            // ImGui::PopID();
-
-            // ImGui::PopStyleColor();
-
             ImGui::End(); },
+
         }
     );
     glDeleteBuffers(1, &vbo);

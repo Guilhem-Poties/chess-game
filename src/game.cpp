@@ -38,6 +38,8 @@ void Game::update(Pos pos)
             std::cout << "Stale mate \n";
         if (this->board.is_checkmate(this->current_player))
             std::cout << "Echec et mat ! \n";
+        if (this->board.is_last_move_repeated_position())
+            std::cout << "Stale mate \n";
     }
 
     // Otherwise, nothing happens

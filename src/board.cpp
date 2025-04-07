@@ -6,6 +6,7 @@ void Board::generate_board()
         this->_board.emplace_back(place_piece(pos));
     }
     this->all_moves.assign(64, {});
+    this->board_history.push_back(copy_board_vector(this->_board));
 }
 int Board::n_turns_played() const
 {
@@ -27,12 +28,14 @@ Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant, bool short_cas
     if (current_pos != new_pos)
     {
         this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
+        this->board_history.push_back(copy_board_vector(this->_board));
 
         Piece* captured_piece{this->at(new_pos)};
 
         if (en_passant)
         {
-            captured_piece                                                                             = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
+            captured_piece = this->at(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos));
+
             this->_board[pos_to_line(get_en_passant_pos(this->at(current_pos)->get_color(), new_pos))] = nullptr;
         }
         else if (short_castle)
@@ -83,7 +86,7 @@ bool Board::is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const
 
 /****** Check managment functions ******/
 
-bool Board::is_check(Color player)
+bool Board::is_check(Color player) const
 {
     if (is_tile_attacked(this->king_pos(player), player))
     {
@@ -116,6 +119,24 @@ int Board::n_possible_moves(Color player) const
 
     std::copy_if(this->all_moves.begin(), this->all_moves.end(), std::back_inserter(player_moves), has_move);
     return player_moves.size();
+}
+bool Board::is_last_move_repeated_position() const
+{
+    const auto& last_board{this->board_history.back()};
+
+    auto is_same_board = [&last_board](const std::vector<std::unique_ptr<Piece>>& prev_board) {
+        if (prev_board.size() == last_board.size())
+            for (int i{0}; i < prev_board.size(); i++)
+            {
+                if ((prev_board[i] == nullptr) != (last_board[i] == nullptr))
+                    return false;
+                if (prev_board[i] != nullptr && last_board[i] != nullptr && *prev_board[i] != *last_board[i])
+                    return false;
+            }
+        return true;
+    };
+
+    return std::count_if(this->board_history.begin(), this->board_history.end(), is_same_board) >= 3;
 }
 bool Board::is_king(Color piece_color, Pos piece_pos) const
 {

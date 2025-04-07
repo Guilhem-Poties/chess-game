@@ -41,6 +41,11 @@ std::vector<Pos> King::get_possible_moves(Board const& board, Pos pos, bool deep
 
     return current_possible_moves;
 }
+bool King::equal(const Piece& other) const
+{
+    const King* other_piece = dynamic_cast<const King*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
+}
 const char* King::to_char()
 {
     return "l";
@@ -75,10 +80,15 @@ std::vector<Pos> Queen::get_possible_moves(Board const& board, Pos pos, bool dee
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
-            move = move + pos_add;
+            move += pos_add;
         }
     }
     return current_possible_moves;
+}
+bool Queen::equal(const Piece& other) const
+{
+    const Queen* other_piece = dynamic_cast<const Queen*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
 }
 const char* Queen::to_char()
 {
@@ -110,10 +120,15 @@ std::vector<Pos> Bishop::get_possible_moves(Board const& board, Pos pos, bool de
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
-            move = move + pos_add;
+            move += pos_add;
         }
     }
     return current_possible_moves;
+}
+bool Bishop::equal(const Piece& other) const
+{
+    const Bishop* other_piece = dynamic_cast<const Bishop*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
 }
 const char* Bishop::to_char()
 {
@@ -158,6 +173,11 @@ std::string Knight::to_string()
 {
     return "Knight";
 }
+bool Knight::equal(const Piece& other) const
+{
+    const Knight* other_piece = dynamic_cast<const Knight*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
+}
 
 // Tower
 std::vector<Pos> Tower::get_possible_moves(Board const& board, Pos pos, bool deepsearch)
@@ -180,10 +200,15 @@ std::vector<Pos> Tower::get_possible_moves(Board const& board, Pos pos, bool dee
                 current_possible_moves.emplace_back(move);
             if (board.tile_state(move, get_color()) == Tile_State::enemy)
                 break;
-            move = move + pos_add;
+            move += pos_add;
         }
     }
     return current_possible_moves;
+}
+bool Tower::equal(const Piece& other) const
+{
+    const Tower* other_piece = dynamic_cast<const Tower*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
 }
 const char* Tower::to_char()
 {
@@ -227,6 +252,11 @@ std::vector<Pos> Pawn::get_possible_moves(Board const& board, Pos pos, bool deep
             current_possible_moves.emplace_back(move);
     }
     return current_possible_moves;
+}
+bool Pawn::equal(const Piece& other) const
+{
+    const Pawn* other_piece = dynamic_cast<const Pawn*>(&other);
+    return other_piece && this->get_color() == other_piece->get_color();
 }
 const char* Pawn::to_char()
 {

@@ -15,6 +15,10 @@ inline Pos operator+(Pos const& pos_a, Pos const& pos_b)
 {
     return {pos_a.x + pos_b.x, pos_a.y + pos_b.y};
 }
+inline void operator+=(Pos& pos_a, Pos const& pos_b)
+{
+    pos_a = pos_a + pos_b;
+}
 inline Pos operator-(Pos const& pos_a, Pos const& pos_b)
 {
     return {pos_a.x - pos_b.x, pos_a.y - pos_b.y};
@@ -26,5 +30,9 @@ inline Pos operator*(Pos const& pos, int mult)
 
 inline bool operator==(Pos const& pos_a, Pos const& pos_b)
 {
-    return ((pos_a.x == pos_b.x) && (pos_a.y == pos_b.y));
+    return pos_a.x == pos_b.x && pos_a.y == pos_b.y;
+}
+inline bool operator!=(Pos const& pos_a, Pos const& pos_b)
+{
+    return !(pos_a == pos_b);
 }

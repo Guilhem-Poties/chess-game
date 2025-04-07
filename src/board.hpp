@@ -26,6 +26,7 @@ class Board {
 private:
     std::vector<std::unique_ptr<Piece>>                 _board{};
     std::vector<std::pair<Piece*, std::pair<Pos, Pos>>> move_history{};
+    std::vector<std::vector<std::unique_ptr<Piece>>>    board_history{};
     std::vector<std::pair<Pos, std::vector<Pos>>>       all_moves{};
 
 public:
@@ -46,12 +47,13 @@ public:
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 
     // Functions to deal with checks
-    bool is_check(Color player);
+    bool is_check(Color player) const;
     bool is_checkmate(Color player);
     bool is_stale_mate(Color player);
     bool is_king(Color piece_color, Pos piece_pos) const;
     Pos  king_pos(Color king_color) const;
     int  n_possible_moves(Color player) const;
+    bool is_last_move_repeated_position() const;
     bool is_move_future_check(Pos piece_pos, Pos move) const;
     bool is_tile_attacked(Pos move, Color color) const;
 
