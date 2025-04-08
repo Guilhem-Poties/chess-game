@@ -1,0 +1,32 @@
+# Blender 4.2.1 LTS MTL File: 'None'
+# www.blender.org
+
+newmtl Metal
+Ns 326.746826
+Ka 0.901360 0.901360 0.901360
+Kd 0.800149 0.000000 0.000761
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+
+newmtl Papier
+Ns 64.793388
+Ka 0.145455 0.145455 0.145455
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/mainProductPicture-ProductDetailsPage-ConversionMediaFormat-null.png
+map_d C:/mainProductPicture-ProductDetailsPage-ConversionMediaFormat-null.png
+
+newmtl Verre
+Ns 722.500000
+Ka 0.640909 0.640909 0.640909
+Kd 0.158960 0.004777 0.004777
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3

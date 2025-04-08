@@ -1,10 +1,12 @@
 #include <imgui.h>
+#include <glm/glm.hpp>
 #include <iostream>
-// #include <vector>
+#include "Camera.hpp"
+#include "Model3D.hpp"
+#include "Shader.hpp"
 #include "game.hpp"
-#include "glad/glad.h"
-#include "glimac/Program.hpp"
-#include "glm/glm.hpp"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/fwd.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 struct Vertex3DColor {
@@ -24,63 +26,56 @@ void load_font(const std::string& path, const float size)
 
 int main(int argc, char** argv)
 {
-    float value{0.f};
+    int           window_width  = 1280;
+    int           window_height = 720;
+    glmax::Shader shader;
+    glmax::Camera camera{true};
+    //
+    Model3D model;
 
     Game game{10.f, 5};
 
     game.start();
 
-    glimac::FilePath               applicationPath(argv[0]);
-    std::optional<glimac::Program> program;
-
-    GLuint vbo;
-    GLuint vao;
-
     quick_imgui::loop(
         "Chess",
         {
             .init = [&]() {
-
-                load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 32);
-
-                program = loadProgram(applicationPath.dirPath() + "res/shader.vs.glsl", applicationPath.dirPath() + "res/shader.fs.glsl");
-                program->use();
-
-                /*VBO*/
-                glGenBuffers(1, &vbo);
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                Vertex3DColor vertices[] = {
-                    Vertex3DColor{glm::vec3(-0.5, -0.5, 0), glm::vec3(1, 0, 0)}, // NOLINT(*modernize-use-designated-initializers)
-                    Vertex3DColor{glm::vec3(0.5, -0.5, 0), glm::vec3(0, 1, 0)}, // NOLINT(*modernize-use-designated-initializers)
-                    Vertex3DColor{glm::vec3(-0.5, 0.5, 0), glm::vec3(0, 0, 1)}, // NOLINT(*modernize-use-designated-initializers)
-
-                    Vertex3DColor{glm::vec3(0.5, 0.5, 0), glm::vec3(1, 0, 0)}, // NOLINT(*modernize-use-designated-initializers)
-                    Vertex3DColor{glm::vec3(0.5, -0.5, 0), glm::vec3(0, 1, 0)}, // NOLINT(*modernize-use-designated-initializers)
-                    Vertex3DColor{glm::vec3(-0.5, 0.5, 0), glm::vec3(0, 0, 1)} // NOLINT(*modernize-use-designated-initializers)
-                };
-                glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex3DColor), vertices, GL_STATIC_DRAW);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-                /*VAO*/
-                glGenVertexArrays(1, &vao);
-                glBindVertexArray(vao);
-                glBindBuffer(GL_ARRAY_BUFFER, vbo);
-                glEnableVertexAttribArray(3);
-                glEnableVertexAttribArray(8);
-                glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex3DColor), (void*)offsetof(Vertex3DColor, position));
-                glVertexAttribPointer(8, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex3DColor), (void*)offsetof(Vertex3DColor, color));
-                glBindVertexArray(0);
-                glBindBuffer(GL_ARRAY_BUFFER, 0); },
+                 load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 32);
+                std::cout << "Init\n";
+                shader.load_shader("model.vs.glsl", "model.fs.glsl");
+                // model.load_mesh("creeper/creeper.obj", "creeper");
+                model.load_mesh("pawn/pawn.obj", "pawn");
+                model.setup_buffers(); },
             // .key_callback = []()
 
-            .loop = [&]() {
-                
-                glClearColor(1.f, 0.5f, 0.5f, 1.f);
-                glClear(GL_COLOR_BUFFER_BIT);
+            .loop                     = [&]() {
+                //
+                glClearColor(0.847f, 0.82f, 0.929f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glEnable(GL_DEPTH_TEST);
+                //
+                for (auto model_matrix : model.m_model_matrices)
+                {
+                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / static_cast<float>(window_height), 0.1f, 100.0f);
 
-                glBindVertexArray(vao);
-                glDrawArrays(GL_TRIANGLES, 0, 6);
-                glBindVertexArray(0);
+                    shader.use();
+                    
+                    //MVP
+                    shader.set_uniform_matrix_4fv("model", model_matrix);
+                    shader.set_uniform_matrix_4fv("view", camera.get_view_matrix());
+                    shader.set_uniform_matrix_4fv("projection", projection);
+
+                    //LIGHT SETTINGS
+                    shader.set_uniform_3fv("lightPos", glm::vec3(5.0f, 5.0f, 5.0f));
+                    shader.set_uniform_3fv("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+                    
+                    //CAMERA SETTINGS
+                    shader.set_uniform_3fv("viewPos", camera.get_position());
+                    
+                    //MODEL RENDER
+                    model.render(shader);
+                }
 
             ImGui::Begin("Chess");
 
@@ -129,9 +124,12 @@ int main(int argc, char** argv)
             ImGui::PopStyleVar();
 
             ImGui::End(); },
+            .key_callback             = [&](int key, int scancode, int action, int mods) { std::cout << "Key: " << key << " Scancode: " << scancode << " Action: " << action << " Mods: " << mods << '\n'; },
+            .mouse_button_callback    = [&](int button, int action, int mods) { std::cout << "Button: " << button << " Action: " << action << " Mods: " << mods << '\n'; },
+            .cursor_position_callback = [&](double xpos, double ypos) { camera.track_ball_move_callback(xpos, ypos); },
+            .scroll_callback          = [&](double xoffset, double yoffset) { camera.process_scroll(yoffset); },
+            .window_size_callback     = [&](int width, int height) { std::cout << "Resized: " << width << ' ' << height << '\n'; },
 
         }
     );
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
 }

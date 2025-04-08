@@ -58,7 +58,8 @@
         "variant": "cpp",
         "map": "cpp",
         "fstream": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "set": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
