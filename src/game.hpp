@@ -9,6 +9,9 @@ private:
     std::pair<float, float> time;
     int                     increment;
 
+    bool promoting = false;
+    Pos  promotion_pos;
+
     bool                                                selected_piece{false};
     Pos                                                 selected_piece_pos{};
     std::vector<Pos>                                    possible_moves{};
@@ -28,4 +31,9 @@ public:
     void select_piece(Pos pos);
 
     bool is_in_move_set(Pos pos);
+
+    bool is_promoting() { return this->promoting; };
+    void promote(std::string option);
+
+    Color get_current_oponant() const { return (Color)((((int)this->current_player) + 1) % 2); };
 };

@@ -9,9 +9,8 @@ void Game::update(Pos pos)
 {
     // If the selected piece is the same color as the current player we select this piece
     if (this->board.tile_state(pos, this->current_player) == Tile_State::ally)
-    {
         this->select_piece(pos);
-    }
+
     // If the selected case is in the pieces possible moves, we move it and switch players
     else if (this->selected_piece && is_in_move_set(pos))
     {
@@ -30,16 +29,17 @@ void Game::update(Pos pos)
 
         this->switch_player();
 
+        if (this->promoting = can_promote(this->board, pos))
+            this->promotion_pos = pos;
+
         this->board.calculate_all_moves();
 
-        if (this->board.is_check(this->current_player))
-            std::cout << "Echec ! \n";
         if (this->board.is_stale_mate(this->current_player))
             std::cout << "Stale mate \n";
         if (this->board.is_checkmate(this->current_player))
             std::cout << "Echec et mat ! \n";
-        if (this->board.is_last_move_repeated_position())
-            std::cout << "Stale mate \n";
+        // if (this->board.is_last_move_repeated_position())
+        //     std::cout << "Stale mate \n";
     }
 
     // Otherwise, nothing happens
@@ -49,10 +49,12 @@ void Game::end(){
 
 void Game::switch_player()
 {
-    if (this->current_player == Color::white)
-        this->current_player = Color::black;
-    else
-        this->current_player = Color::white;
+    // if (this->get_current_oponant() == Color::white)
+    //     std::cout << "white \n";
+    // else
+    //     std::cout << "black \n";
+
+    this->current_player = this->get_current_oponant();
 };
 void Game::capture_piece(Piece* piece)
 {
@@ -72,6 +74,21 @@ void Game::select_piece(Pos pos)
         this->selected_piece_pos = pos;
         this->selected_piece     = true;
     }
+}
+
+void Game::promote(std::string option)
+{
+    this->board.promote(this->promotion_pos, this->get_current_oponant(), option);
+    this->promoting     = false;
+    this->promotion_pos = {};
+
+    this->board.calculate_all_moves();
+    if (this->board.is_stale_mate(this->current_player))
+        std::cout << "Stale mate \n";
+    if (this->board.is_checkmate(this->current_player))
+        std::cout << "Echec et mat ! \n";
+    if (this->board.is_last_move_repeated_position())
+        std::cout << "Stale mate \n";
 }
 
 bool Game::is_in_move_set(Pos pos)

@@ -20,5 +20,3 @@ private:
     std::vector<std::string> object_names{"king", "queen", "bishop", "knight", "tower", "pawn", "board"};
     // std::vector<std::unordered_map<std::string, std::string>> object_path_by_name{"king", "queen", "bishop", "knight", "tower", "pawn"};
 };
-
-Pos center_pos(Pos pos);

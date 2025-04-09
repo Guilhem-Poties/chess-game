@@ -46,6 +46,8 @@ public:
     std::vector<Pos>                                      get_piece_move(Pos pos) const;
     bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
 
+    void promote(Pos pos, Color color, std::string option);
+
     // Functions to deal with checks
     bool is_check(Color player) const;
     bool is_checkmate(Color player);

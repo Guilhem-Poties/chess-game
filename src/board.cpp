@@ -13,6 +13,22 @@ int Board::n_turns_played() const
     return this->move_history.size();
 }
 
+void Board::promote(Pos pos, Color color, std::string option)
+{
+    if (option == "t")
+        this->_board[pos_to_line(pos)] = std::move(std::make_unique<Tower>(color));
+    else if (option == "j")
+        this->_board[pos_to_line(pos)] = std::move(std::make_unique<Knight>(color));
+
+    else if (option == "n")
+        this->_board[pos_to_line(pos)] = std::move(std::make_unique<Bishop>(color));
+
+    else if (option == "w")
+        this->_board[pos_to_line(pos)] = std::move(std::make_unique<Queen>(color));
+
+    this->move_history.push_back(std::make_pair(this->at(pos), std::make_pair(pos, pos)));
+}
+
 /****** Piece managment functions ******/
 
 // Return the piece located at the suggested coordonates and a nullptr if empty
