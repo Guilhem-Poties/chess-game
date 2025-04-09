@@ -42,7 +42,6 @@ void Model3D::setup_buffers()
 void Model3D::render(glmax::Shader& shader) const
 {
     m_vao.bind();
-    // shader.set_uniform_matrix_4fv("model", m_model_matrix)
 
     for (const glmax::Submesh& submesh : m_mesh.get_submeshes())
     {

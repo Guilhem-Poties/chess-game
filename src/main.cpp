@@ -2,11 +2,11 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include "Camera.hpp"
-#include "Model3D.hpp"
 #include "Shader.hpp"
 #include "game.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/fwd.hpp"
+#include "objectManager.hpp"
 #include "quick_imgui/quick_imgui.hpp"
 
 struct Vertex3DColor {
@@ -34,19 +34,22 @@ int main(int argc, char** argv)
     Model3D model;
 
     Game game{10.f, 5};
-
     game.start();
+
+    ObjectManager objectManager;
+    objectManager.generate_objects_matrices(game.board);
+    objectManager.generate_models();
 
     quick_imgui::loop(
         "Chess",
         {
             .init = [&]() {
-                 load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/medias/fonts/CHEQ_TT.TTF", 32);
+                 load_font("../assets/fonts/CHEQ_TT.TTF", 32);
                 std::cout << "Init\n";
                 shader.load_shader("model.vs.glsl", "model.fs.glsl");
-                // model.load_mesh("creeper/creeper.obj", "creeper");
                 model.load_mesh("pawn/pawn.obj", "pawn");
-                model.setup_buffers(); },
+                model.setup_buffers(); 
+                objectManager.init(); },
             // .key_callback = []()
 
             .loop                     = [&]() {
@@ -55,33 +58,37 @@ int main(int argc, char** argv)
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glEnable(GL_DEPTH_TEST);
                 //
-                for (auto model_matrix : model.m_model_matrices)
+                for (auto model_matrices : objectManager.get_objects_matrices())
                 {
-                    glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / static_cast<float>(window_height), 0.1f, 100.0f);
+                    for (auto model_matrix : model_matrices.second ) 
+                    {
 
-                    shader.use();
-                    
-                    //MVP
-                    shader.set_uniform_matrix_4fv("model", model_matrix);
-                    shader.set_uniform_matrix_4fv("view", camera.get_view_matrix());
-                    shader.set_uniform_matrix_4fv("projection", projection);
+                        glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(window_width) / static_cast<float>(window_height), 0.1f, 100.0f);
 
-                    //LIGHT SETTINGS
-                    shader.set_uniform_3fv("lightPos", glm::vec3(5.0f, 5.0f, 5.0f));
-                    shader.set_uniform_3fv("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-                    
-                    //CAMERA SETTINGS
-                    shader.set_uniform_3fv("viewPos", camera.get_position());
-                    
-                    //MODEL RENDER
-                    model.render(shader);
+                        shader.use();
+                        
+                        //MVP
+                        shader.set_uniform_matrix_4fv("model", model_matrix);
+                        shader.set_uniform_matrix_4fv("view", camera.get_view_matrix());
+                        shader.set_uniform_matrix_4fv("projection", projection);
+
+                        //LIGHT SETTINGS
+                        shader.set_uniform_3fv("lightPos", glm::vec3(5.0f, 5.0f, 5.0f));
+                        shader.set_uniform_3fv("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+                        
+                        //CAMERA SETTINGS
+                        shader.set_uniform_3fv("viewPos", camera.get_position());
+                        
+                        //MODEL RENDER
+                        objectManager.get_object_model(model_matrices.first)->render(shader);
+                    }
                 }
 
             ImGui::Begin("Chess");
 
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0.f, 0.f});
 
-            for (int i = 63; i >=0; i--)
+            for (int i = 0; i <64; i++)
             {
                 int n_pop {1}; // Count the number of pop to do at the end of the Imguiloop
                 if (((i / 8) + (i % 8) + 1) % 2 == 0)
@@ -111,14 +118,16 @@ int main(int argc, char** argv)
 
                 ImGui::PushID(i);
 
-                if (ImGui::Button(game.board.at(line_to_pos(i)) == nullptr ? "" : game.board.at(line_to_pos(i))->to_char(), ImVec2{50.f, 50.f}))
+                if (ImGui::Button(game.board.at(line_to_pos(i)) == nullptr ? "" : game.board.at(line_to_pos(i))->to_char(), ImVec2{50.f, 50.f})){
                     game.update(line_to_pos(i));
+                    objectManager.generate_objects_matrices(game.board);
+                }
                 
 
                 ImGui::PopID();
                 ImGui::PopStyleColor(n_pop);
 
-                if (i % 8 != 0)
+                if (i % 8 != 7)
                     ImGui::SameLine();
             }
             ImGui::PopStyleVar();

@@ -52,7 +52,7 @@ const char* King::to_char()
 }
 std::string King::to_string()
 {
-    return "King";
+    return "king";
 }
 
 // Queen
@@ -96,7 +96,7 @@ const char* Queen::to_char()
 }
 std::string Queen::to_string()
 {
-    return "Queen";
+    return "queen";
 }
 
 // Bishop
@@ -136,7 +136,7 @@ const char* Bishop::to_char()
 }
 std::string Bishop::to_string()
 {
-    return "Bishop";
+    return "bishop";
 }
 
 // Knight
@@ -171,7 +171,7 @@ const char* Knight::to_char()
 }
 std::string Knight::to_string()
 {
-    return "Knight";
+    return "knight";
 }
 bool Knight::equal(const Piece& other) const
 {
@@ -216,7 +216,7 @@ const char* Tower::to_char()
 }
 std::string Tower::to_string()
 {
-    return "Tower";
+    return "tower";
 }
 
 // Pawn
@@ -264,7 +264,7 @@ const char* Pawn::to_char()
 }
 std::string Pawn::to_string()
 {
-    return "Pawn";
+    return "pawn";
 }
 
 std::unique_ptr<Piece> place_piece(int pos)

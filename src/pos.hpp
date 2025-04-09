@@ -8,7 +8,10 @@ struct Pos {
     Pos incr_x(int incr) { return {this->x + incr, this->y}; };
     Pos incr_y(int incr) { return {this->x, this->y + incr}; };
 
-    std::string to_string() { return std::to_string(x) + ", " + std::to_string(y) + "\n"; };
+    std::string to_string()
+    {
+        return std::to_string(x) + ", " + std::to_string(y) + "\n";
+    };
 };
 
 inline Pos operator+(Pos const& pos_a, Pos const& pos_b)
@@ -25,7 +28,11 @@ inline Pos operator-(Pos const& pos_a, Pos const& pos_b)
 }
 inline Pos operator*(Pos const& pos, int mult)
 {
-    return {pos.x * 2, pos.y * 2};
+    return {pos.x * mult, pos.y * mult};
+}
+inline Pos operator/(Pos const& pos, int div)
+{
+    return {pos.x / div, pos.y / div};
 }
 
 inline bool operator==(Pos const& pos_a, Pos const& pos_b)
