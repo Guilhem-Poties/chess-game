@@ -44,7 +44,7 @@ int main(int argc, char** argv)
         "Chess",
         {
             .init = [&]() {
-                 load_font("../assets/fonts/CHEQ_TT.TTF", 32);
+                 load_font("C:/Users/Guilhem Poties/Documents/Etudes/IMAC/S4/programmation_objet/chess-game/assets/fonts/CHEQ_TT.TTF", 32);
                 std::cout << "Init\n";
                 shader.load_shader("model.vs.glsl", "model.fs.glsl");
                 model.load_mesh("pawn/pawn.obj", "pawn");
