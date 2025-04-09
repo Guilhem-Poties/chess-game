@@ -96,7 +96,6 @@ int main(int argc, char** argv)
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 0.7f});
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.9f, 0.7f, 1.f});
-                        // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{0.f, 0.f, 0.f, 1.f});
                     }
                     else
                     {
@@ -104,7 +103,6 @@ int main(int argc, char** argv)
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 0.7f});
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 1.f});
-                        // ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
                     }
 
                     if (Piece* piece = game.board.at(line_to_pos(i)); piece != nullptr)
@@ -124,9 +122,7 @@ int main(int argc, char** argv)
                         {
                             game.update(line_to_pos(i));
                             objectManager.generate_objects_matrices(game.board);
-                        }
-                        else std::cout << "No \n";
-                        
+                        }                        
                     }
 
                     ImGui::PopID();

@@ -1,7 +1,7 @@
-# Blender 4.2.1 LTS MTL File: 'None'
+# Blender 4.2.1 LTS MTL File: 'adjustment.blend'
 # www.blender.org
 
-newmtl Metal
+newmtl Metal.001
 Ns 640.000000
 Ka 0.718182 0.718182 0.718182
 Kd 0.755077 0.763548 0.800040
@@ -21,7 +21,7 @@ illum 2
 map_Kd C:/L0199037-PASTISRICARDBOUTEILLEPLASTIQUE1L.png
 map_d C:/L0199037-PASTISRICARDBOUTEILLEPLASTIQUE1L.png
 
-newmtl Verre
+newmtl Verre.001
 Ns 868.285095
 Ka 0.450000 0.450000 0.450000
 Kd 0.801724 0.240417 0.024262

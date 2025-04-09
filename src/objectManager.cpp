@@ -5,7 +5,7 @@ void ObjectManager::generate_objects_matrices(Board const& board)
     this->objects_matrices = {};
     for (int i = 0; i <= 64; i++)
         if (Piece* piece = board.at(line_to_pos(i)); piece != nullptr)
-            this->objects_matrices[piece->to_string()].push_back(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f * line_to_pos(i).x - 4.0f, 0.0f, 1.0f * line_to_pos(i).y - 4.0f)));
+            this->objects_matrices[piece->to_string()].push_back(glm::translate(glm::mat4(0.5f), glm::vec3(2 * (1.0f * line_to_pos(i).x - 3.5f), 0.0f, 2 * (1.0f * line_to_pos(i).y - 3.5f))));
     this->objects_matrices["board"].push_back(glm::translate(glm::mat4(0.5f), glm::vec3(0.0f, 0.0f, 0.0f)));
 
     std::cout << "Matrices succesfully generated \n";

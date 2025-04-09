@@ -269,65 +269,64 @@ std::string Pawn::to_string()
 
 std::unique_ptr<Piece> place_piece(int pos)
 {
-    // switch (line_to_pos(pos).y)
-    // {
-    // case 0:
+    switch (line_to_pos(pos).y)
+    {
+    case 0:
+        switch (pieces_alignement[line_to_pos(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::white);
+        case 1:
+            return std::make_unique<Knight>(Color::white);
+        case 2:
+            return std::make_unique<Bishop>(Color::white);
+        case 0:
+            return std::make_unique<King>(Color::white);
+        case 4:
+            return std::make_unique<Queen>(Color::white);
+        default:
+            return nullptr;
+        }
 
-    //     switch (pieces_alignement[line_to_pos(pos).x])
-    //     {
-    //     case 3:
-    //         return std::make_unique<Tower>(Color::white);
-    //     case 1:
-    //         return std::make_unique<Knight>(Color::white);
-    //     case 2:
-    //         return std::make_unique<Bishop>(Color::white);
-    //     case 0:
-    //         return std::make_unique<King>(Color::white);
-    //     case 4:
-    //         return std::make_unique<Queen>(Color::white);
-    //     default:
-    //         return nullptr;
-    //     }
+    case 7:
+        switch (pieces_alignement[line_to_pos(pos).x])
+        {
+        case 3:
+            return std::make_unique<Tower>(Color::black);
+        case 1:
+            return std::make_unique<Knight>(Color::black);
+        case 2:
+            return std::make_unique<Bishop>(Color::black);
+        case 0:
+            return std::make_unique<King>(Color::black);
+        case 4:
+            return std::make_unique<Queen>(Color::black);
+        default:
+            return nullptr;
+        }
 
-    // case 7:
-    //     switch (pieces_alignement[line_to_pos(pos).x])
-    //     {
-    //     case 3:
-    //         return std::make_unique<Tower>(Color::black);
-    //     case 1:
-    //         return std::make_unique<Knight>(Color::black);
-    //     case 2:
-    //         return std::make_unique<Bishop>(Color::black);
-    //     case 0:
-    //         return std::make_unique<King>(Color::black);
-    //     case 4:
-    //         return std::make_unique<Queen>(Color::black);
-    //     default:
-    //         return nullptr;
-    //     }
-
-    // case 1:
-    //     return std::make_unique<Pawn>(Color::white);
-    // case 6:
-    //     return std::make_unique<Pawn>(Color::black);
-    // default:
-    //     return nullptr;
-    // }
-
-    if (pos == 3)
-        return std::make_unique<King>(Color::white);
-    else if (pos == 52)
+    case 1:
         return std::make_unique<Pawn>(Color::white);
+    case 6:
+        return std::make_unique<Pawn>(Color::black);
+    default:
+        return nullptr;
+    }
+
+    // if (pos == 3)
+    //     return std::make_unique<King>(Color::white);
+    // else if (pos == 52)
+    //     return std::make_unique<Pawn>(Color::white);
     // else if (pos == 7)
     //     return std::make_unique<Tower>(Color::white);
     // else if (pos == 6)
     //     return std::make_unique<Tower>(Color::white);
-    else if (pos == 15)
-        return std::make_unique<Pawn>(Color::black);
-    else if (pos == 55)
-        return std::make_unique<King>(Color::black);
-    else
-        return nullptr;
+    // else if (pos == 15)
+    //     return std::make_unique<Pawn>(Color::black);
+    // else if (pos == 55)
+    //     return std::make_unique<King>(Color::black);
+    // else
+    // return nullptr;
 }
 
 bool can_short_castle(Board const& board, Pos possible_pos, Color king_color)

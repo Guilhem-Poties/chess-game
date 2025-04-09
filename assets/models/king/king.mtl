@@ -1,7 +1,7 @@
-# Blender 4.2.1 LTS MTL File: 'None'
+# Blender 4.2.1 LTS MTL File: 'adjustment.blend'
 # www.blender.org
 
-newmtl Material.001
+newmtl Material.010
 Ns 250.000000
 Ka 1.000000 1.000000 1.000000
 Kd 0.800000 0.800000 0.800000

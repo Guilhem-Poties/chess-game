@@ -1,17 +1,7 @@
-# Blender 4.2.1 LTS MTL File: 'None'
+# Blender 4.2.1 LTS MTL File: 'adjustment.blend'
 # www.blender.org
 
-newmtl Material.001
-Ns 592.022522
-Ka 0.689119 0.689119 0.689119
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.500000
-illum 3
-map_Kd C:/bte-50cl-biere-bavaria-86.png
-map_d C:/bte-50cl-biere-bavaria-86.png
-
-newmtl Material.002
+newmtl Material.004
 Ns 449.509338
 Ka 0.926136 0.926136 0.926136
 Kd 0.496930 0.496933 0.496933
@@ -21,7 +11,17 @@ Ni 1.500000
 d 1.000000
 illum 3
 
-newmtl Material.003
+newmtl Material.005
+Ns 592.022522
+Ka 0.689119 0.689119 0.689119
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd C:/bte-50cl-biere-bavaria-86.png
+map_d C:/bte-50cl-biere-bavaria-86.png
+
+newmtl Material.006
 Ns 310.046478
 Ka 0.926136 0.926136 0.926136
 Kd 1.000000 0.727341 0.171035
@@ -31,7 +31,7 @@ Ni 1.500000
 d 1.000000
 illum 3
 
-newmtl Material.004
+newmtl Material.007
 Ns 592.022522
 Ka 0.689119 0.689119 0.689119
 Ks 0.500000 0.500000 0.500000

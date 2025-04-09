@@ -1,7 +1,7 @@
-# Blender 4.2.1 LTS MTL File: 'None'
+# Blender 4.2.1 LTS MTL File: 'adjustment.blend'
 # www.blender.org
 
-newmtl Material.002
+newmtl Material.008
 Ns 620.258240
 Ka 0.673575 0.673575 0.673575
 Ks 0.500000 0.500000 0.500000
@@ -11,7 +11,7 @@ illum 3
 map_Kd C:/R-de-Ruinart-demi-bouteille-37.png
 map_d C:/R-de-Ruinart-demi-bouteille-37.png
 
-newmtl Material.003
+newmtl Material.009
 Ns 834.731384
 Ka 0.200000 0.200000 0.200000
 Ks 0.500000 0.500000 0.500000
