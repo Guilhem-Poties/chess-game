@@ -9,7 +9,10 @@ void Game::update(Pos pos)
 {
     // If the selected piece is the same color as the current player we select this piece
     if (this->board.tile_state(pos, this->current_player) == Tile_State::ally)
+    {
         this->select_piece(pos);
+        this->moved_piece = false;
+    }
 
     // If the selected case is in the pieces possible moves, we move it and switch players
     else if (this->selected_piece && is_in_move_set(pos))
@@ -26,6 +29,7 @@ void Game::update(Pos pos)
         this->selected_piece     = false;
         this->selected_piece_pos = {};
         this->possible_moves     = {};
+        this->moved_piece        = true;
 
         this->switch_player();
 
@@ -38,8 +42,10 @@ void Game::update(Pos pos)
             std::cout << "Stale mate \n";
         if (this->board.is_checkmate(this->current_player))
             std::cout << "Echec et mat ! \n";
-        // if (this->board.is_last_move_repeated_position())
-        //     std::cout << "Stale mate \n";
+        if (this->board.is_last_move_repeated_position())
+            std::cout << "repetition \n";
+        // if (this->board.fifty_moves_rule())
+        //     std::cout << "fifty \n";
     }
 
     // Otherwise, nothing happens
@@ -58,14 +64,14 @@ void Game::switch_player()
 };
 void Game::capture_piece(Piece* piece)
 {
-    if (piece == nullptr)
+    if (piece != nullptr)
     {
         if (this->current_player == Color::white)
             this->captured_pieces.first.push_back(piece);
         else
             this->captured_pieces.second.push_back(piece);
     }
-};
+}
 void Game::select_piece(Pos pos)
 {
     if (auto piece = this->board.at(pos); piece != nullptr)
@@ -84,14 +90,21 @@ void Game::promote(std::string option)
 
     this->board.calculate_all_moves();
     if (this->board.is_stale_mate(this->current_player))
-        std::cout << "Stale mate \n";
+        std::cout << "Pat \n";
     if (this->board.is_checkmate(this->current_player))
         std::cout << "Echec et mat ! \n";
     if (this->board.is_last_move_repeated_position())
-        std::cout << "Stale mate \n";
+        std::cout << "Repetition \n";
+    if (this->board.fifty_moves_rule())
+        std::cout << "fifty \n";
 }
 
 bool Game::is_in_move_set(Pos pos)
 {
     return std::find(this->possible_moves.begin(), this->possible_moves.end(), pos) != this->possible_moves.end();
+}
+
+std::vector<Piece*> Game::get_captured_piece(Color player)
+{
+    return player == Color::white ? this->captured_pieces.first : this->captured_pieces.second;
 }

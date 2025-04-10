@@ -24,10 +24,10 @@ enum class Tile_State : int {
 
 class Board {
 private:
-    std::vector<std::unique_ptr<Piece>>                 _board{};
-    std::vector<std::pair<Piece*, std::pair<Pos, Pos>>> move_history{};
-    std::vector<std::vector<std::unique_ptr<Piece>>>    board_history{};
-    std::vector<std::pair<Pos, std::vector<Pos>>>       all_moves{};
+    std::vector<std::unique_ptr<Piece>>                                    _board{};
+    std::vector<std::pair<std::pair<Piece*, Piece*>, std::pair<Pos, Pos>>> move_history{};
+    std::vector<std::vector<std::unique_ptr<Piece>>>                       board_history{};
+    std::vector<std::pair<Pos, std::vector<Pos>>>                          all_moves{};
 
 public:
     Board(){};
@@ -39,12 +39,13 @@ public:
     Piece* at(Pos) const;
 
     // Functions to manage pieces movements
-    Piece*                                                move(Pos current_pos, Pos new_pos, bool en_passant, bool short_castle, bool long_castle);
-    void                                                  calculate_all_moves(bool deepsearch = true); // Calculate all the possibles moves and stock them in the all_moves variable
-    bool                                                  is_tower(Color piece_color, Pos piece_pos) const;
-    std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
-    std::vector<Pos>                                      get_piece_move(Pos pos) const;
-    bool                                                  is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
+    Piece*           move(Pos current_pos, Pos new_pos, bool en_passant, bool short_castle, bool long_castle);
+    void             calculate_all_moves(bool deepsearch = true); // Calculate all the possibles moves and stock them in the all_moves variable
+    bool             is_tower(Color piece_color, Pos piece_pos) const;
+    std::vector<Pos> get_piece_move(Pos pos) const;
+    bool             is_pos_in_piece_moveset(Pos pos_a, Pos pos_b) const; // Checks is a specific piece is in a piece moveset
+
+    std::optional<std::pair<std::pair<Piece*, Piece*>, std::pair<Pos, Pos>>> get_last_move() const; // Get the last move from the move history
 
     void promote(Pos pos, Color color, std::string option);
 
@@ -56,6 +57,7 @@ public:
     Pos  king_pos(Color king_color) const;
     int  n_possible_moves(Color player) const;
     bool is_last_move_repeated_position() const;
+    bool fifty_moves_rule() const;
     bool is_move_future_check(Pos piece_pos, Pos move) const;
     bool is_tile_attacked(Pos move, Color color) const;
 

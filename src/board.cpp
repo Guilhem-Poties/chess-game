@@ -26,7 +26,7 @@ void Board::promote(Pos pos, Color color, std::string option)
     else if (option == "w")
         this->_board[pos_to_line(pos)] = std::move(std::make_unique<Queen>(color));
 
-    this->move_history.push_back(std::make_pair(this->at(pos), std::make_pair(pos, pos)));
+    this->move_history.push_back(std::make_pair(std::make_pair(this->at(pos), nullptr), std::make_pair(pos, pos)));
 }
 
 /****** Piece managment functions ******/
@@ -43,7 +43,7 @@ Piece* Board::move(Pos current_pos, Pos new_pos, bool en_passant, bool short_cas
 {
     if (current_pos != new_pos)
     {
-        this->move_history.push_back(std::make_pair(this->at(current_pos), std::make_pair(current_pos, new_pos)));
+        this->move_history.push_back(std::make_pair(std::make_pair(this->at(current_pos), this->at(new_pos)), std::make_pair(current_pos, new_pos)));
         this->board_history.push_back(copy_board_vector(this->_board));
 
         Piece* captured_piece{this->at(new_pos)};
@@ -84,7 +84,7 @@ bool Board::is_tower(Color piece_color, Pos piece_pos) const
 {
     return this->tile_state(piece_pos, piece_color) == Tile_State::ally && dynamic_cast<Tower*>(this->at(piece_pos));
 }
-std::optional<std::pair<Piece*, std::pair<Pos, Pos>>> Board::get_last_move() const
+std::optional<std::pair<std::pair<Piece*, Piece*>, std::pair<Pos, Pos>>> Board::get_last_move() const
 {
     if (this->move_history.size() != 0)
         return this->move_history.back();
@@ -153,6 +153,21 @@ bool Board::is_last_move_repeated_position() const
     };
 
     return std::count_if(this->board_history.begin(), this->board_history.end(), is_same_board) >= 3;
+}
+bool Board::fifty_moves_rule() const
+{
+    if (this->move_history.size() >= 50)
+    {
+        auto it_end    = this->move_history.end();
+        auto it_begin  = std::prev(it_end, 50);
+        auto rule_pred = [](std::pair<std::pair<Piece*, Piece*>, std::pair<Pos, Pos>> move) {
+            return ((move.first.first != nullptr && dynamic_cast<Pawn*>(move.first.first)) || move.first.second != nullptr);
+        };
+
+        return std::find_if(it_begin, it_end, rule_pred) == it_end;
+    }
+    else
+        return false;
 }
 bool Board::is_king(Color piece_color, Pos piece_pos) const
 {

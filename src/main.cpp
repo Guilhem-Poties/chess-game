@@ -40,6 +40,9 @@ int main(int argc, char** argv)
     objectManager.generate_objects_matrices(game.board);
     objectManager.generate_models();
 
+    float animation_time{0.0f};
+    float animation_speed{1.0f};
+
     quick_imgui::loop(
         "Chess",
         {
@@ -82,6 +85,14 @@ int main(int argc, char** argv)
                         objectManager.get_object_model(model_matrices.first)->render(shader);
                     }
                 }
+                if(!objectManager.is_animating())
+                {
+                    game.unmove_piece();
+                    objectManager.generate_objects_matrices(game.board);
+                }
+                else
+                    objectManager.animate(game.board, animation_time, animation_speed);
+
 
                 ImGui::Begin("Chess");
 
@@ -90,22 +101,23 @@ int main(int argc, char** argv)
                 for (int i = 0; i < 64; i++)
                 {
                     int n_pop{1}; // Count the number of pop to do at the end of the Imguiloop
+                    Pos pos = line_to_pos(i);
                     if (((i / 8) + (i % 8) + 1) % 2 == 0)
                     {
-                        if (game.is_in_move_set(line_to_pos(i)))
+                        if (game.is_in_move_set(pos))
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.9f, 0.9f, 0.8f, 0.7f});
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.8f, 0.9f, 0.7f, 1.f});
                     }
                     else
                     {
-                        if (game.is_in_move_set(line_to_pos(i)))
+                        if (game.is_in_move_set(pos))
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 0.7f});
                         else
                             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{0.35f, 0.55f, 0.25f, 1.f});
                     }
 
-                    if (Piece* piece = game.board.at(line_to_pos(i)); piece != nullptr)
+                    if (Piece* piece = game.board.at(pos); piece != nullptr)
                     {
                         if (piece->get_color() == Color::white)
                             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4{1.f, 1.f, 1.f, 1.f});
@@ -116,12 +128,14 @@ int main(int argc, char** argv)
 
                     ImGui::PushID(i);
 
-                    if (ImGui::Button(game.board.at(line_to_pos(i)) == nullptr ? "" : game.board.at(line_to_pos(i))->to_char(), ImVec2{50.f, 50.f}))
+                    if (ImGui::Button(game.board.at(pos) == nullptr ? "" : game.board.at(pos)->to_char(), ImVec2{50.f, 50.f}))
                     {
-                        if (!game.is_promoting())
+                        if (!game.is_promoting() && !objectManager.is_animating())
                         {
-                            game.update(line_to_pos(i));
-                            objectManager.generate_objects_matrices(game.board);
+                            game.update(pos);
+                            if(game.has_moved_piece())
+                                objectManager.animate(game.board, animation_time, animation_speed);
+                            // if (game.is_new_captured_piece())                            
                         }                        
                     }
 

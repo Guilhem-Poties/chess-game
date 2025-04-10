@@ -378,12 +378,12 @@ bool can_en_passant(Board const& board, Pos pos)
 {
     if (board.get_last_move().has_value())
     {
-        std::pair<Piece*, std::pair<Pos, Pos>> last_move{board.get_last_move().value()};
-        if (dynamic_cast<Pawn*>(last_move.first))
+        auto last_move{board.get_last_move().value()};
+        if (dynamic_cast<Pawn*>(last_move.first.first))
         {
             if (last_move.second.first.y == last_move.second.second.y - 2 || last_move.second.first.y == last_move.second.second.y + 2)
             {
-                return board.at(pos) == last_move.first;
+                return board.at(pos) == last_move.first.first;
             }
             else
                 return false;
